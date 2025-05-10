@@ -1,9 +1,10 @@
-from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db.models import Q
+from django.urls import reverse
 from .models import Category, Product, ProductImage
 from .forms import ProductForm, ProductImageFormSet, CategoryForm
 
@@ -59,13 +60,22 @@ class ProductDetailView(DetailView):
     model = Product
     template_name = 'products/product_detail.html'
     context_object_name = 'product'
+    slug_field = 'slug'
+    slug_url_kwarg = 'slug'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        product = self.object
         context['related_products'] = Product.objects.filter(
-            category=self.object.category,
+            category=product.category,
             is_active=True
         ).exclude(pk=self.object.pk)[:4]
+        # Add breadcrumbs
+        context['breadcrumbs'] = [
+            {'name': 'Products', 'url': reverse('product_list')},
+            {'name': product.category.name, 'url': product.category.get_absolute_url()},
+            {'name': product.name, 'url': product.get_absolute_url()}
+        ]
         return context
 
 

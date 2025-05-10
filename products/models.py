@@ -47,8 +47,8 @@ class Product(models.Model):
         ('XL', 'Extra Large'),
         ('XXL', 'Double Extra Large'),
     ]
-
     name = models.CharField(max_length=200)
+    slug = models.SlugField(max_length=200, unique=True, blank=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     sku = models.CharField(max_length=50, unique=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
@@ -65,6 +65,20 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+            # Ensure slug is unique
+            original_slug = self.slug
+            counter = 1
+            while Product.objects.filter(slug=self.slug).exclude(pk=self.pk).exists():
+                self.slug = f"{original_slug}-{counter}"
+                counter += 1
+        super().save(*args, **kwargs)
+
+    def get_absolute_url(self):
+        return reverse('product_detail', kwargs={'slug': self.slug})
 
 
 class ProductImage(models.Model):
