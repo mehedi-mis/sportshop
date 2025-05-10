@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     # 'custom_jerseys',
     # 'gaming',
     # 'orders',
-    # 'products',
+    'products',
     'users',
     # 'website',
 
