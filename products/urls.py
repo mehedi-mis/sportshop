@@ -9,9 +9,9 @@ from .views import (
 
 urlpatterns = [
     # # Admin Product URLs
-    # path('product/add/', ProductCreateView.as_view(), name='product_create'),
-    # path('product/<slug:slug>/edit/', ProductUpdateView.as_view(), name='product_update'),
-    # path('product/<slug:slug>/delete/', ProductDeleteView.as_view(), name='product_delete'),
+    path('product/add/', ProductCreateView.as_view(), name='product_create'),
+    path('product/<slug:slug>/edit/', ProductUpdateView.as_view(), name='product_update'),
+    path('product/<slug:slug>/delete/', ProductDeleteView.as_view(), name='product_delete'),
 
     # Category URLs
     path('categories/', CategoryListView.as_view(), name='category_list'),
