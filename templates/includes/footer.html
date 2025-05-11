@@ -1,3 +1,4 @@
+{% load static %}
     <footer class="bg-dark text-white pt-5 pb-4 mt-5">
         <div class="container">
             <div class="row">
@@ -11,6 +12,7 @@
                         <a href="#" class="text-white"><i class="fab fa-youtube"></i></a>
                     </div>
                 </div>
+                {% comment %}
                 <div class="col-md-3 mb-4">
                     <h5>Quick Links</h5>
                     <ul class="list-unstyled">
@@ -30,6 +32,7 @@
                         <li><a href="{% url 'product-care' %}" class="text-white">Product Care</a></li>
                     </ul>
                 </div>
+                {% endcomment %}
                 <div class="col-md-3 mb-4">
                     <h5>Newsletter</h5>
                     <p>Subscribe to get updates on new products and special offers!</p>

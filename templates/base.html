@@ -1,5 +1,4 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -29,6 +28,7 @@
         </div>
     </div>
     <!-- Navigation Bar -->
+    {% include 'includes/navbar.html' %}
 
     <!-- Messages/Alerts -->
     {% if messages %}
@@ -48,7 +48,7 @@
     </main>
 
     <!-- Footer -->
-<!--    Need to add  footer here-->
+    {% include 'includes/footer.html' %}
 
     <!-- Back to Top Button -->
     <button type="button" class="btn btn-primary btn-floating btn-lg rounded-circle shadow" id="back-to-top">
