@@ -33,10 +33,11 @@ INSTALLED_APPS = [
     'django.contrib.sites',
 
     # custom app list below
+    'cart',
     # 'chat',
     # 'custom_jerseys',
     # 'gaming',
-    # 'orders',
+    'orders',
     'products',
     'users',
     # 'website',
@@ -56,6 +57,8 @@ SITE_ID = 1
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
+
+CART_SESSION_ID = 'cart'  # Key to store cart in session
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

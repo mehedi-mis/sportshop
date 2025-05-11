@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="mb-4">Your Shopping Cart</h1>
+    
+    {% if cart|length > 0 %}
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Total</th>
+                    <th>Remove</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in cart %}
+                {% with product=item.product %}
+                <tr>
+                    <td>
+                        <a href="{{ product.get_absolute_url }}">
+                            {{ product.name }}
+                        </a>
+                        {% if product.size %} - {{ product.get_size_display }}{% endif %}
+                    </td>
+                    <td>
+                        <form action="{% url 'cart_add' product.id %}" method="post" class="d-inline">
+                            {% csrf_token %}
+                            <input type="number" name="quantity" value="{{ item.quantity }}" min="1" max="10" 
+                                   class="form-control form-control-sm d-inline-block" style="width: 70px;">
+                            <input type="hidden" name="update" value="true">
+                            <button type="submit" class="btn btn-sm btn-outline-secondary ms-2">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                        </form>
+                    </td>
+                    <td>${{ item.price }}</td>
+                    <td>${{ item.total_price }}</td>
+                    <td>
+                        <form action="{% url 'cart_remove' product.id %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-danger">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endwith %}
+                {% endfor %}
+                <tr class="table-secondary">
+                    <td colspan="3"><strong>Total</strong></td>
+                    <td colspan="2"><strong>${{ cart.get_total_price }}</strong></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="d-flex justify-content-between">
+        <a href="{% url 'product_list' %}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Continue Shopping
+        </a>
+        <a href="{% url 'order_create' %}" class="btn btn-primary">
+            Proceed to Checkout <i class="fas fa-arrow-right ms-2"></i>
+        </a>
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        Your cart is empty. <a href="{% url 'product_list' %}" class="alert-link">Continue shopping</a>.
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

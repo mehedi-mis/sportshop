@@ -63,14 +63,14 @@
                             <span class="badge bg-danger wishlist-count">0</span>
                         </a>
                     </li>
+                    {% endcomment %}
                     <li class="nav-item dropdown">
-                        <a class="nav-link position-relative" href="{% url 'cart' %}" title="Cart">
+                        <a class="nav-link position-relative" href="{% url 'cart_detail' %}" title="Cart">
                             <i class="fas fa-shopping-cart"></i>
                             <span class="d-lg-none ms-2">Cart</span>
                             <span class="badge bg-primary cart-count">0</span>
                         </a>
                     </li>
-                    {% endcomment %}
                     {% if user.is_authenticated %}
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">

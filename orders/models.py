@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 from users.models import CustomUser
 from products.models import Product
 
@@ -37,6 +38,20 @@ class Order(models.Model):
     def __str__(self):
         return self.order_number
 
+    def get_total_with_shipping(self):
+        return self.order_total + self.shipping_cost + self.tax
+
+    def mark_as_paid(self):
+        self.is_paid = True
+        self.paid_at = timezone.now()
+        self.save()
+
+    def can_be_cancelled(self):
+        return self.status in ['P', 'PR']
+
+    class Meta:
+        ordering = ['-created_at']
+
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
@@ -47,3 +62,6 @@ class OrderItem(models.Model):
 
     def __str__(self):
         return f"{self.quantity} x {self.product.name} for order {self.order.order_number}"
+
+    def get_cost(self):
+        return self.price * self.quantity
