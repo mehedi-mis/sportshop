@@ -63,6 +63,7 @@
             </div>
             
             <!-- Add to Cart Form -->
+            {% comment %}
             <form method="post" action="{% url 'add_to_cart' product.slug %}">
                 {% csrf_token %}
                 <div class="row g-3 align-items-center mb-4">
@@ -80,6 +81,7 @@
                     </div>
                 </div>
             </form>
+            {% endcomment %}
             
             <!-- Share Buttons -->
             <div class="share-buttons mt-4">

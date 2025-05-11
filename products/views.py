@@ -76,6 +76,8 @@ class ProductDetailView(DetailView):
             {'name': product.category.name, 'url': product.category.get_absolute_url()},
             {'name': product.name, 'url': product.get_absolute_url()}
         ]
+        context['categories'] = Category.objects.filter(is_active=True, parent__isnull=True)
+        context['current_category'] = product.category.slug
         return context
 
 
