@@ -8,9 +8,11 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('allauth.urls')),
     path('users/', include('users.urls')),
-    path('products/', include('products.urls')),
     path('orders/', include('orders.urls')),
     path('cart/', include('cart.urls')),
+    path('jersey/', include('custom_jerseys.urls')),
+    path('chat/', include('chat.urls')),
+    path('', include('products.urls')),
 ]
 
 if settings.DEBUG:

@@ -34,8 +34,8 @@ INSTALLED_APPS = [
 
     # custom app list below
     'cart',
-    # 'chat',
-    # 'custom_jerseys',
+    'chat',
+    'custom_jerseys',
     # 'gaming',
     'orders',
     'products',
@@ -175,4 +175,5 @@ ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 SOCIALACCOUNT_EMAIL_VERIFICATION = 'none'  # Google already verifies emails
 
 # Email (Development)
+DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL')
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

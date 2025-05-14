@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h3>Custom Jersey Order</h3>
+        </div>
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        {{ form.name_on_jersey|as_crispy_field }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ form.jersey_number|as_crispy_field }}
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        {{ form.size|as_crispy_field }}
+                    </div>
+                    <div class="col-md-4">
+                        {{ form.primary_color|as_crispy_field }}
+                    </div>
+                    <div class="col-md-4">
+                        {{ form.secondary_color|as_crispy_field }}
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        {{ form.team_logo|as_crispy_field }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ form.reference_image|as_crispy_field }}
+                    </div>
+                </div>
+
+                {{ form.design_preferences|as_crispy_field }}
+
+                <button type="submit" class="btn btn-primary w-100 mt-3">
+                    Submit Order Request
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
