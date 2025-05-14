@@ -9,7 +9,7 @@ from django.core.mail import send_mail
 from django.conf import settings
 from .models import Order, OrderItem
 from .forms import OrderForm, OrderStatusForm
-from cart.models import Cart
+from cart.utils import SessionCart
 
 
 class OrderListView(LoginRequiredMixin, ListView):
@@ -41,8 +41,14 @@ class OrderCreateView(LoginRequiredMixin, CreateView):
     template_name = 'orders/order_create.html'
     success_url = reverse_lazy('order_list')
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.request.POST:
+            context['cart'] = SessionCart(self.request)
+        return context
+
     def form_valid(self, form):
-        cart = Cart(self.request)
+        cart = SessionCart(self.request)
         if len(cart) == 0:
             messages.error(self.request, "Your cart is empty")
             return redirect('cart_detail')
@@ -62,7 +68,7 @@ class OrderCreateView(LoginRequiredMixin, CreateView):
             )
 
         # Clear the cart
-        # cart.clear()
+        cart.clear()
 
         # Send confirmation email
         self.send_order_confirmation_email(order)
