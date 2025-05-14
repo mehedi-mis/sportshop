@@ -37,13 +37,13 @@
                     <a href="{% url 'profile' %}" class="list-group-item list-group-item-action active">
                         <i class="fas fa-user me-2"></i>Profile Information
                     </a>
+                    <a href="{% url 'order_list' %}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-shopping-bag me-2"></i>Order History
+                    </a>
                     <a href="{% url 'logout' %}" class="list-group-item list-group-item-action">
                         <i class="fas fa-sign-out me-2"></i>Logout
                     </a>
             {% comment %}
-                    <a href="{% url 'order_history' %}" class="list-group-item list-group-item-action">
-                        <i class="fas fa-shopping-bag me-2"></i>Order History
-                    </a>
                     <a href="{% url 'wishlist' %}" class="list-group-item list-group-item-action">
                         <i class="fas fa-heart me-2"></i>Wishlist
                     </a>

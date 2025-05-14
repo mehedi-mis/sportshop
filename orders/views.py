@@ -43,8 +43,9 @@ class OrderCreateView(LoginRequiredMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        if self.request.POST:
-            context['cart'] = SessionCart(self.request)
+        cart = SessionCart(self.request)
+        context['cart'] = cart
+        context['cart_items'] = list(cart.__iter__())
         return context
 
     def form_valid(self, form):

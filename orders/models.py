@@ -1,3 +1,4 @@
+import uuid
 from django.db import models
 from django.utils import timezone
 from users.models import CustomUser
@@ -37,6 +38,14 @@ class Order(models.Model):
 
     def __str__(self):
         return self.order_number
+
+    def generate_order_number(self):
+        return uuid.uuid4().hex[:10].upper()  # 10-character unique ID
+
+    def save(self, *args, **kwargs):
+        if not self.order_number:
+            self.order_number = self.generate_order_number()
+        super().save(*args, **kwargs)
 
     def get_total_with_shipping(self):
         return self.order_total + self.shipping_cost + self.tax
