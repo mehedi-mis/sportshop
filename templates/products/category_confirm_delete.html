@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h3>Confirm Deletion</h3>
+                </div>
+                <div class="card-body">
+                    <p>Are you sure you want to delete "{{ object }}"?</p>
+                    
+                    {% if object.get_children.exists or object.products.exists %}
+                    <div class="alert alert-warning">
+                        <strong>Warning!</strong> This category contains:
+                        <ul>
+                            {% if object.get_children.exists %}
+                            <li>{{ object.get_children.count }} subcategories</li>
+                            {% endif %}
+                            {% if object.products.exists %}
+                            <li>{{ object.products.count }} products</li>
+                            {% endif %}
+                        </ul>
+                        Deleting this category will remove these relationships.
+                    </div>
+                    {% endif %}
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{% url 'category_detail' object.slug %}" class="btn btn-secondary me-md-2">
+                                Cancel
+                            </a>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-trash-alt me-1"></i> Delete
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

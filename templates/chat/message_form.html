@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4>
+                        <i class="fas fa-comment me-2"></i>
+                        New Message in
+                        {% if request.user.is_staff %}
+                        Chat with {{ chat_room.user.get_full_name|default:chat_room.user.email }}
+                        {% else %}
+                        Chat with Admin
+                        {% endif %}
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <div class="mb-3">
+                            {{ form.content|as_crispy_field }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Attach Image (Optional)</label>
+                            <input type="file" name="image" class="form-control" accept="image/*">
+                            <small class="text-muted">Max size: 5MB. Supported formats: JPG, PNG, GIF</small>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{% url 'chat_room_detail' chat_room.pk %}" class="btn btn-secondary me-md-2">
+                                <i class="fas fa-arrow-left me-1"></i> Back to Chat
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane me-1"></i> Send Message
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Custom styling for the form */
+    textarea.form-control {
+        min-height: 150px;
+    }
+    .card-header {
+        padding: 1rem 1.5rem;
+    }
+</style>
+{% endblock %}

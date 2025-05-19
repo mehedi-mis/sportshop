@@ -1,0 +1,12 @@
+{% autoescape off %}
+Hi {{ user.email }},
+
+Please click on the link below to confirm your registration:
+
+http://{{ domain }}{% url 'activate_account' uidb64=uid token=token %}
+
+If you didn't request this, please ignore this email.
+
+Thanks,
+Sports Shop Team
+{% endautoescape %}

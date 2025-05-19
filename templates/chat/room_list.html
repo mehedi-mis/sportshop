@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Chat Rooms</h1>
+        {% if user.is_staff %}
+        <a href="{% url 'room_create' %}" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i>New Chat
+        </a>
+        {% endif %}
+    </div>
+
+    <div class="list-group">
+        {% for room in chat_rooms %}
+        <a href="{% url 'chat_room_detail' room.pk %}" class="list-group-item list-group-item-action">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h5 class="mb-1">
+                        {% if user.is_staff %}
+                        Chat with {{ room.user.get_full_name|default:room.user.email }}
+                        {% else %}
+                        Chat with Admin
+                        {% endif %}
+                    </h5>
+                    <small class="text-muted">
+                        Last activity: {{ room.updated_at|timesince }} ago
+                    </small>
+                </div>
+                <span class="badge bg-{% if room.is_active %}success{% else %}secondary{% endif %}">
+                    {% if room.is_active %}Active{% else %}Inactive{% endif %}
+                </span>
+            </div>
+        </a>
+        {% empty %}
+        <div class="alert alert-info">No chat rooms found</div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

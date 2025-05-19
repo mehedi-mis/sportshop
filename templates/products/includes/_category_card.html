@@ -1,0 +1,33 @@
+<div class="col">
+    <div class="card h-100 category-card">
+        <a href="{% url 'category_detail' category.slug %}">
+            {% if category.image %}
+            <img src="{{ category.image.url }}"
+                 class="card-img-top"
+                 alt="{{ category.name }}"
+                 style="height: 200px; object-fit: cover;">
+            {% else %}
+            <div class="card-img-top bg-light d-flex align-items-center justify-content-center"
+                 style="height: 200px;">
+                <i class="fas fa-folder-open fa-4x text-muted"></i>
+            </div>
+            {% endif %}
+        </a>
+
+        <div class="card-body">
+            <h5 class="card-title">
+                <a href="{% url 'category_detail' category.slug %}" class="text-decoration-none text-dark">
+                    {{ category.name }}
+                </a>
+            </h5>
+
+            {% if category.description %}
+            <p class="card-text text-muted small">{{ category.description|truncatechars:60 }}</p>
+            {% endif %}
+
+            <a href="{% url 'category_detail' category.slug %}" class="btn btn-sm btn-outline-primary">
+                View Products
+            </a>
+        </div>
+    </div>
+</div>

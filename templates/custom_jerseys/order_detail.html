@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h3>Custom Jersey Order #{{ order.order_number }}</h3>
+        </div>
+        <div class="card-body">
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h5>Design Details</h5>
+                    <p><strong>Name:</strong> {{ order.name_on_jersey }}</p>
+                    <p><strong>Number:</strong> {{ order.jersey_number }}</p>
+                    <p><strong>Size:</strong> {{ order.get_size_display }}</p>
+                    <p>
+                        <strong>Colors:</strong>
+                        <span style="display: inline-block; width: 20px; height: 20px; background-color: {{ order.primary_color }};"></span> Primary
+                        {% if order.secondary_color %}
+                        / <span style="display: inline-block; width: 20px; height: 20px; background-color: {{ order.secondary_color }};"></span> Secondary
+                        {% endif %}
+                    </p>
+                    {% if order.design_preferences %}
+                    <p><strong>Design Notes:</strong> {{ order.design_preferences }}</p>
+                    {% endif %}
+                </div>
+                <div class="col-md-6">
+                    <h5>Order Information</h5>
+                    <p><strong>Status:</strong>
+                        <span class="badge bg-{% if order.status == 'P' %}warning{% elif order.status == 'A' %}info{% elif order.status == 'D' %}primary{% elif order.status == 'PR' %}secondary{% elif order.status == 'S' %}success{% elif order.status == 'C' %}success{% else %}danger{% endif %}">
+                            {{ order.get_status_display }}
+                        </span>
+                    </p>
+                    <p><strong>Price:</strong> ${{ order.price }}</p>
+                    <p><strong>Order Date:</strong> {{ order.created_at|date:"M d, Y" }}</p>
+                    <p><strong>Last Updated:</strong> {{ order.updated_at|date:"M d, Y" }}</p>
+                </div>
+            </div>
+
+            {% if order.team_logo %}
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h5>Team Logo</h5>
+                    <img src="{{ order.team_logo.url }}" class="img-fluid" style="max-height: 200px;">
+                </div>
+                {% if order.reference_image %}
+                <div class="col-md-6">
+                    <h5>Reference Image</h5>
+                    <img src="{{ order.reference_image.url }}" class="img-fluid" style="max-height: 200px;">
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+        <div class="card-footer">
+            <a href="{% url 'custom_jersey_list' %}" class="btn btn-secondary">
+                Back to Orders
+            </a>
+            {% if user.is_staff %}
+            <a href="{% url 'custom_jersey_status_update' order.pk %}" class="btn btn-primary float-end">
+                Update Status
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

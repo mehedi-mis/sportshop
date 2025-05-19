@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <!-- Sidebar with Categories -->
+        <div class="col-md-3 mb-4">
+            <div class="card">
+                <div class="card-header bg-warning text-white">
+                    <h5>Categories</h5>
+                </div>
+                <div class="list-group list-group-flush">
+                    {% for category in categories %}
+                    <a href="{% url 'product_list_by_category' category.slug %}"
+                       class="list-group-item list-group-item-action {% if current_category == category.slug %}active{% endif %}">
+                        {{ category.name }}
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="col-md-9">
+            {% block product_content %}{% endblock %}
+        </div>
+    </div>
+</div>
+{% endblock %}
