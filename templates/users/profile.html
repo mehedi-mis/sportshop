@@ -40,6 +40,9 @@
                     <a href="{% url 'order_list' %}" class="list-group-item list-group-item-action">
                         <i class="fas fa-shopping-bag me-2"></i>Order History
                     </a>
+                    <a href="{% url 'custom_jersey_list' %}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-shopping-bag me-2"></i>Custom Jersey Order History
+                    </a>
                     {% if user.is_staff %}
                     <a href="{% url 'product_create' %}" class="list-group-item list-group-item-action">
                         <i class="fas fa-folder-plus me-2"></i>Add Categories

@@ -22,6 +22,7 @@ class CustomJerseyOrderForm(forms.ModelForm):
         self.fields['size'].choices = Product.SIZE_CHOICES
         self.fields['secondary_color'].required = False
 
+
 class CustomJerseyStatusForm(forms.ModelForm):
     class Meta:
         model = CustomJerseyOrder

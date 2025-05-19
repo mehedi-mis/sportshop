@@ -1,4 +1,4 @@
-from datetime import timezone
+from datetime import datetime
 
 from django.views.generic import ListView, DetailView, CreateView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -100,7 +100,7 @@ class OrderStatusUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView)
     def form_valid(self, form):
         order = form.save()
         if order.status == 'D' and not order.delivered_at:
-            order.delivered_at = timezone.now()
+            order.delivered_at = datetime.now()
             order.save()
         messages.success(self.request, f"Order #{order.order_number} status updated to {order.get_status_display()}")
         return redirect('order_detail', pk=order.pk)
