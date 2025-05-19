@@ -11,15 +11,15 @@
                 <div class="card-body text-center">
                     <div class="profile-picture-container mb-3">
                         {% if user.profile_picture %}
-                            <img src="{{ user.profile_picture.url }}" 
-                                 class="rounded-circle img-fluid" 
-                                 alt="Profile Picture"
-                                 style="width: 150px; height: 150px; object-fit: cover;">
+                        <img src="{{ user.profile_picture.url }}"
+                             class="rounded-circle img-fluid"
+                             alt="Profile Picture"
+                             style="width: 150px; height: 150px; object-fit: cover;">
                         {% else %}
-                            <img src="{% static 'images/default_profile.png' %}"
-                                 class="rounded-circle img-fluid" 
-                                 alt="Default Profile Picture"
-                                 style="width: 150px; height: 150px; object-fit: cover;">
+                        <img src="{% static 'images/default_profile.png' %}"
+                             class="rounded-circle img-fluid"
+                             alt="Default Profile Picture"
+                             style="width: 150px; height: 150px; object-fit: cover;">
                         {% endif %}
                     </div>
                     <h5 class="card-title">{{ user.get_full_name|default:user.email }}</h5>
@@ -27,7 +27,7 @@
                     <p class="text-muted">Member since {{ user.date_joined|date:"F Y" }}</p>
                 </div>
             </div>
-            
+
             <!-- Navigation -->
             <div class="card">
                 <div class="card-header">
@@ -40,21 +40,33 @@
                     <a href="{% url 'order_list' %}" class="list-group-item list-group-item-action">
                         <i class="fas fa-shopping-bag me-2"></i>Order History
                     </a>
+                    {% if user.is_staff %}
+                    <a href="{% url 'product_create' %}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-folder-plus me-2"></i>Add Categories
+                    </a>
+                    <a href="{% url 'product_create' %}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-file-circle-plus me-2"></i>Add Product
+                    </a>
+
+                    <a href="{% url 'room_create' %}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-comment-medical me-2"></i>Create Chat
+                    </a>
+                    {% endif %}
                     <a href="{% url 'logout' %}" class="list-group-item list-group-item-action">
                         <i class="fas fa-sign-out me-2"></i>Logout
                     </a>
-            {% comment %}
+                    {% comment %}
                     <a href="{% url 'wishlist' %}" class="list-group-item list-group-item-action">
                         <i class="fas fa-heart me-2"></i>Wishlist
                     </a>
                     <a href="{% url 'password_change' %}" class="list-group-item list-group-item-action">
                         <i class="fas fa-lock me-2"></i>Change Password
                     </a>
-            {% endcomment %}
+                    {% endcomment %}
                 </div>
             </div>
         </div>
-        
+
         <div class="col-md-8">
             <!-- Profile Update Form -->
             <div class="card">
@@ -72,7 +84,7 @@
                                 {{ form.last_name|as_crispy_field }}
                             </div>
                         </div>
-                        
+
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 {{ form.email|as_crispy_field }}
@@ -81,7 +93,7 @@
                                 {{ form.phone|as_crispy_field }}
                             </div>
                         </div>
-                        
+
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 {{ form.gender|as_crispy_field }}
@@ -90,18 +102,18 @@
                                 {{ form.date_of_birth|as_crispy_field }}
                             </div>
                         </div>
-                        
+
                         <div class="mb-3">
                             {{ form.profile_picture }}
                         </div>
-                        
+
                         <hr class="my-4">
-                        
+
                         <h5 class="mb-3">Address Information</h5>
                         <div class="mb-3">
                             {{ form.address|as_crispy_field }}
                         </div>
-                        
+
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 {{ form.city|as_crispy_field }}
@@ -110,7 +122,7 @@
                                 {{ form.state|as_crispy_field }}
                             </div>
                         </div>
-                        
+
                         <div class="row mb-4">
                             <div class="col-md-6">
                                 {{ form.zip_code|as_crispy_field }}
@@ -119,9 +131,9 @@
                                 {{ form.country|as_crispy_field }}
                             </div>
                         </div>
-                        
+
                         <hr class="my-4">
-                        
+
                         <h5 class="mb-3">Change Password</h5>
                         <div class="mb-3">
                             {{ form.current_password|as_crispy_field }}
@@ -132,7 +144,7 @@
                         <div class="mb-4">
                             {{ form.confirm_password|as_crispy_field }}
                         </div>
-                        
+
                         <button type="submit" class="btn btn-primary w-100">
                             <i class="fas fa-save me-2"></i>Update Profile
                         </button>
@@ -146,13 +158,13 @@
 
 {% block extra_js %}
 <script>
-// Preview profile picture before upload
-document.getElementById('id_profile_picture').addEventListener('change', function(event) {
-    const [file] = event.target.files;
-    if (file) {
-        const preview = document.querySelector('.profile-picture-container img');
-        preview.src = URL.createObjectURL(file);
-    }
-});
+    // Preview profile picture before upload
+    document.getElementById('id_profile_picture').addEventListener('change', function(event) {
+        const [file] = event.target.files;
+        if (file) {
+            const preview = document.querySelector('.profile-picture-container img');
+            preview.src = URL.createObjectURL(file);
+        }
+    });
 </script>
 {% endblock %}

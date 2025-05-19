@@ -3,7 +3,7 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top shadow-sm">
         <div class="container">
             <!-- Brand Logo -->
-            <a class="navbar-brand" href="{% url 'profile' %}">
+            <a class="navbar-brand" href="{% url 'product_list' %}">
                 <img src="{% static 'images/logo.png' %}" alt="SportsHub" height="40">
                 SportsHub
             </a>
@@ -29,7 +29,7 @@
                         </ul>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'room_create' %}">Create Chat</a>
+                        <a class="nav-link" href="{% url 'chat_room_list' %}">Chat List</a>
                     </li>
                     {% comment %}
                     <li class="nav-item">
