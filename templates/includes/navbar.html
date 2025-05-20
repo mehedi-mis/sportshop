@@ -1,97 +1,111 @@
 {% load static %}
-    <!-- Main Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top shadow-sm">
-        <div class="container">
-            <!-- Brand Logo -->
-            <a class="navbar-brand" href="{% url 'product_list' %}">
-                <img src="{% static 'images/logo.png' %}" alt="SportsHub" height="40">
-                SportsHub
-            </a>
+<!-- Main Navigation -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top shadow-sm">
+    <div class="container">
+        <!-- Brand Logo -->
+        <a class="navbar-brand" href="{% url 'product_list' %}">
+            <img src="{% static 'images/logo.png' %}" alt="SportsHub" height="40">
+            SportsHub
+        </a>
 
-            <!-- Mobile Toggle Button -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+        <!-- Mobile Toggle Button -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-            <!-- Navbar Content -->
-            <div class="collapse navbar-collapse" id="mainNavbar">
-                <!-- Main Navigation Links -->
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="categoriesDropdown" role="button" data-bs-toggle="dropdown">
-                            Shop Categories
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="categoriesDropdown">
-                            <li><a class="dropdown-item" href="{% url 'product_list_by_category' 'apparel-clothing' %}">Apparel & Clothing</a></li>
-                                                      <li><a class="dropdown-item" href="{% url 'product_list_by_category' 'footwear' %}">Footwear</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="{% url 'product_list' %}">All Products</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'chat_room_list' %}">Chat List</a>
-                    </li>
-                    {% comment %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'gaming-zone' %}">Gaming Zone</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'about' %}">About Us</a>
-                    </li>
-                    {% endcomment %}
-                </ul>
-
-                <!-- Search Form -->
+        <!-- Navbar Content -->
+        <div class="collapse navbar-collapse" id="mainNavbar">
+            <!-- Main Navigation Links -->
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="categoriesDropdown" role="button"
+                       data-bs-toggle="dropdown">
+                        Shop Categories
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="categoriesDropdown">
+                        {% for category in categories %}
+                        <li>
+                            <a class="dropdown-item {% if current_category == category.slug %}active{% endif %}" href="{% url 'product_list_by_category' category.slug %}">
+                                {{ category.name }}</a>
+                        </li>
+                        {% endfor %}
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item" href="{% url 'category_list' %}">All Categories</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'product_list' %}">All Products</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'chat_room_list' %}">Chat List</a>
+                </li>
                 {% comment %}
-                <form class="d-flex mx-lg-3" action="{% url 'search' %}" method="GET">
-                    <div class="input-group">
-                        <input class="form-control" type="search" name="q" placeholder="Search products..." aria-label="Search">
-                        <button class="btn btn-outline-primary" type="submit">
-                            <i class="fas fa-search"></i>
-                        </button>
-                    </div>
-                </form>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'gaming-zone' %}">Gaming Zone</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'about' %}">About Us</a>
+                </li>
                 {% endcomment %}
+            </ul>
 
-                <!-- User Actions -->
-                <ul class="navbar-nav">
-                    {% comment %}
-                    <li class="nav-item dropdown">
-                        <a class="nav-link" href="{% url 'wishlist' %}" title="Wishlist">
-                            <i class="fas fa-heart"></i>
-                            <span class="d-lg-none ms-2">Wishlist</span>
-                            <span class="badge bg-danger wishlist-count">0</span>
-                        </a>
-                    </li>
-                    {% endcomment %}
-                    <li class="nav-item dropdown">
-                        <a class="nav-link position-relative" href="{% url 'cart_detail' %}" title="Cart">
-                            <i class="fas fa-shopping-cart"></i>
-                            <span class="d-lg-none ms-2">Cart</span>
-                            <span class="badge bg-primary cart-count">0</span>
-                        </a>
-                    </li>
-                    {% if user.is_authenticated %}
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-user-circle"></i>
-                            <span class="d-lg-none ms-2">Account</span>
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                            <li><a class="dropdown-item" href="{% url 'profile' %}">My Profile</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
-                        </ul>
-                    </li>
-                    {% else %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'login' %}">
-                            <i class="fas fa-sign-in-alt"></i>
-                            <span class="d-lg-none ms-2">Login</span>
-                        </a>
-                    </li>
-                    {% endif %}
-                </ul>
-            </div>
+            <!-- Search Form -->
+            {% comment %}
+            <form class="d-flex mx-lg-3" action="{% url 'search' %}" method="GET">
+                <div class="input-group">
+                    <input class="form-control" type="search" name="q" placeholder="Search products..."
+                           aria-label="Search">
+                    <button class="btn btn-outline-primary" type="submit">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </form>
+            {% endcomment %}
+
+            <!-- User Actions -->
+            <ul class="navbar-nav">
+                {% comment %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link" href="{% url 'wishlist' %}" title="Wishlist">
+                        <i class="fas fa-heart"></i>
+                        <span class="d-lg-none ms-2">Wishlist</span>
+                        <span class="badge bg-danger wishlist-count">0</span>
+                    </a>
+                </li>
+                {% endcomment %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link position-relative" href="{% url 'cart_detail' %}" title="Cart">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="d-lg-none ms-2">Cart</span>
+                        <span class="badge bg-primary cart-count">0</span>
+                    </a>
+                </li>
+                {% if user.is_authenticated %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                       data-bs-toggle="dropdown">
+                        <i class="fas fa-user-circle"></i>
+                        <span class="d-lg-none ms-2">Account</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                        <li><a class="dropdown-item" href="{% url 'profile' %}">My Profile</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                    </ul>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'login' %}">
+                        <i class="fas fa-sign-in-alt"></i>
+                        <span class="d-lg-none ms-2">Login</span>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
         </div>
-    </nav>
+    </div>
+</nav>
