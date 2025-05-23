@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Notifications</h1>
+        <a href="{% url 'notifications_read_all' %}" class="btn btn-outline-secondary">
+            Mark All as Read
+        </a>
+        <a href="{% url 'notifications_unread_count' %}" class="btn btn-outline-secondary">
+            Mark All as Unread
+        </a>
+    </div>
+
+    <div class="list-group">
+        {% for notification in notifications %}
+        <a href="{% url 'notification_read' notification.pk %}" 
+           class="list-group-item list-group-item-action {% if not notification.is_read %}list-group-item-primary{% endif %}">
+            <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">
+                    <i class="fas fa-{% if notification.notification_type == 'order' %}shopping-bag{% elif notification.notification_type == 'chat' %}comment{% elif notification.notification_type == 'jersey' %}tshirt{% else %}bell{% endif %} me-2"></i>
+                    {{ notification.title }}
+                </h5>
+                <small>{{ notification.created_at|timesince }} ago</small>
+            </div>
+            <p class="mb-1">{{ notification.message }}</p>
+            {% if not notification.is_read %}
+            <span class="badge bg-primary">New</span>
+            {% endif %}
+        </a>
+        {% empty %}
+        <div class="alert alert-info">You have no notifications</div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'chat',
     'custom_jerseys',
     # 'gaming',
+    'notifications',
     'orders',
     'products',
     'users',

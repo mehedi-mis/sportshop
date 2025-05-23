@@ -13,90 +13,116 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- Custom CSS -->
-<!--    <link rel="stylesheet" href="{% static 'css/style.css' %}">-->
+    <!--    <link rel="stylesheet" href="{% static 'css/style.css' %}">-->
 
     <!-- Favicon -->
-<!--    <link rel="icon" href="{% static 'images/favicon.ico' %}">-->
+    <!--    <link rel="icon" href="{% static 'images/favicon.ico' %}">-->
 
     {% block extra_css %}{% endblock %}
 </head>
 <body>
-    <!-- Top Announcement Bar -->
-    <div class="announcement-bar bg-dark text-white py-2">
-        <div class="container text-center">
-            <p class="mb-0">Free shipping on orders over $50 | 50% discount for leaderboard winners!</p>
-        </div>
+<!-- Top Announcement Bar -->
+<div class="announcement-bar bg-dark text-white py-2">
+    <div class="container text-center">
+        <p class="mb-0">Free shipping on orders over $50 | 50% discount for leaderboard winners!</p>
     </div>
-    <!-- Navigation Bar -->
-    {% include 'includes/navbar.html' %}
+</div>
+<!-- Navigation Bar -->
+{% include 'includes/navbar.html' %}
 
-    <!-- Messages/Alerts -->
-    {% if messages %}
-    <div class="container mt-3">
-        {% for message in messages %}
-        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-            {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-        {% endfor %}
+<!-- Messages/Alerts -->
+{% if messages %}
+<div class="container mt-3">
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
-    {% endif %}
+    {% endfor %}
+</div>
+{% endif %}
 
-    <!-- Main Content Block -->
-    <main class="flex-shrink-0">
-        {% block content %}{% endblock %}
-    </main>
+<!-- Main Content Block -->
+<main class="flex-shrink-0">
+    {% block content %}{% endblock %}
+</main>
 
-    <!-- Footer -->
-    {% include 'includes/footer.html' %}
+<!-- Footer -->
+{% include 'includes/footer.html' %}
 
-    <!-- Back to Top Button -->
-    <button type="button" class="btn btn-primary btn-floating btn-lg rounded-circle shadow"
-            style="position: fixed; bottom: 40px; right: 40px; z-index: 1050; display: none;" id="back-to-top">
-        <i class="fas fa-arrow-up"></i>
-    </button>
+<!-- Back to Top Button -->
+<button type="button" class="btn btn-primary btn-floating btn-lg rounded-circle shadow"
+        style="position: fixed; bottom: 40px; right: 40px; z-index: 1050; display: none;" id="back-to-top">
+    <i class="fas fa-arrow-up"></i>
+</button>
 
-    <!-- Bootstrap 5 JS Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Bootstrap 5 JS Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <!-- Custom JS -->
+<!-- Custom JS -->
 
-    {% block extra_js %}{% endblock %}
+{% block extra_js %}{% endblock %}
 
-    <script>
-    // Back to top button
-    $(document).ready(function(){
-        $(window).scroll(function(){
-            if ($(this).scrollTop() > 100) {
-                $('#back-to-top').fadeIn();
+<script>
+    // Check for new notifications every 30 seconds
+    function checkNotifications() {
+    fetch("{% url 'notifications_unread_count' %}")
+        .then(response => response.json())
+        .then(data => {
+            const badge = document.getElementById('notification-count');
+            if (data.count > 0) {
+                badge.textContent = data.count;
+                badge.style.display = 'block';
+
+                // Play sound if count increased
+                if (data.count > parseInt(badge.textContent || 0)) {
+                    const audio = new Audio('/static/notification.mp3');
+                    audio.play().catch(e => console.log("Audio play failed:", e));
+                }
             } else {
-                $('#back-to-top').fadeOut();
+                badge.style.display = 'none';
             }
         });
+    }
 
-        $('#back-to-top').click(function(){
-            $('html, body').animate({scrollTop : 0}, 800);
-            return false;
-        });
+    // Check immediately and then every 30 seconds
+    checkNotifications();
+    setInterval(checkNotifications, 30000);
 
-        // Update cart and wishlist counts from session storage
-        function updateCartCounts() {
-            const cartCount = localStorage.getItem('cartCount') || 0;
-            const wishlistCount = localStorage.getItem('wishlistCount') || 0;
-            $('.cart-count').text(cartCount);
-            $('.wishlist-count').text(wishlistCount);
+// Back to top button
+$(document).ready(function(){
+    $(window).scroll(function(){
+        if ($(this).scrollTop() > 100) {
+            $('#back-to-top').fadeIn();
+        } else {
+            $('#back-to-top').fadeOut();
         }
-
-        // Initial update
-        updateCartCounts();
-
-        // Listen for custom events (you'll dispatch these when cart/wishlist changes)
-        document.addEventListener('cartUpdated', updateCartCounts);
-        document.addEventListener('wishlistUpdated', updateCartCounts);
     });
-    </script>
+
+    $('#back-to-top').click(function(){
+        $('html, body').animate({scrollTop : 0}, 800);
+        return false;
+    });
+
+    // Update cart and wishlist counts from session storage
+    function updateCartCounts() {
+        const cartCount = localStorage.getItem('cartCount') || 0;
+        const wishlistCount = localStorage.getItem('wishlistCount') || 0;
+        $('.cart-count').text(cartCount);
+        $('.wishlist-count').text(wishlistCount);
+    }
+
+    // Initial update
+    updateCartCounts();
+
+    // Listen for custom events (you'll dispatch these when cart/wishlist changes)
+    document.addEventListener('cartUpdated', updateCartCounts);
+    document.addEventListener('wishlistUpdated', updateCartCounts);
+});
+
+</script>
 </body>
 </html>

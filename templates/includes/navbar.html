@@ -25,7 +25,8 @@
                     <ul class="dropdown-menu" aria-labelledby="categoriesDropdown">
                         {% for category in categories %}
                         <li>
-                            <a class="dropdown-item {% if current_category == category.slug %}active{% endif %}" href="{% url 'product_list_by_category' category.slug %}">
+                            <a class="dropdown-item {% if current_category == category.slug %}active{% endif %}"
+                               href="{% url 'product_list_by_category' category.slug %}">
                                 {{ category.name }}</a>
                         </li>
                         {% endfor %}
@@ -41,14 +42,12 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'chat_room_list' %}">Chat List</a>
                 </li>
-                {% comment %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'gaming-zone' %}">Gaming Zone</a>
+                    <a class="nav-link" href="#">Gaming Zone</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'about' %}">About Us</a>
+                    <a class="nav-link" href="#">About Us</a>
                 </li>
-                {% endcomment %}
             </ul>
 
             <!-- Search Form -->
@@ -66,15 +65,13 @@
 
             <!-- User Actions -->
             <ul class="navbar-nav">
-                {% comment %}
                 <li class="nav-item dropdown">
-                    <a class="nav-link" href="{% url 'wishlist' %}" title="Wishlist">
+                    <a class="nav-link" href="#" title="Wishlist">
                         <i class="fas fa-heart"></i>
                         <span class="d-lg-none ms-2">Wishlist</span>
                         <span class="badge bg-danger wishlist-count">0</span>
                     </a>
                 </li>
-                {% endcomment %}
                 <li class="nav-item dropdown">
                     <a class="nav-link position-relative" href="{% url 'cart_detail' %}" title="Cart">
                         <i class="fas fa-shopping-cart"></i>
@@ -82,6 +79,38 @@
                         <span class="badge bg-primary cart-count">0</span>
                     </a>
                 </li>
+
+                <!-- notification action -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link position-relative" href="#" id="notificationDropdown" role="button"
+                       data-bs-toggle="dropdown">
+                        <i class="fas fa-bell"></i>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                              id="notification-count">{{ request.user.notifications.unread.count }}
+                        </span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationDropdown">
+                        {% for notification in request.user.notifications.unread|slice:":5" %}
+                        <li>
+                            <a class="dropdown-item" href="{% url 'notification_read' notification.pk %}">
+                                <div class="d-flex justify-content-between">
+                                    <strong>{{ notification.title }}</strong>
+                                    <small>{{ notification.created_at|timesince }}</small>
+                                </div>
+                                <small>{{ notification.message|truncatechars:30 }}</small>
+                            </a>
+                        </li>
+                        {% empty %}
+                        <li><a class="dropdown-item" href="#">No new notifications</a></li>
+                        {% endfor %}
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item" href="{% url 'notifications' %}">View all notifications</a></li>
+                    </ul>
+                </li>
+
+                <!-- User Account Actions -->
                 {% if user.is_authenticated %}
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
