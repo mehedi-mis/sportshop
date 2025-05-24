@@ -24,6 +24,8 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
 
+    # django library
+    'django.contrib.humanize',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -33,6 +35,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
 
     # custom app list below
+    'admin_dashboard',
     'cart',
     'chat',
     'custom_jerseys',

@@ -66,14 +66,18 @@
                     <a class="nav-link" href="{% url 'wishlist' %}" title="Wishlist">
                         <i class="fas fa-heart"></i>
                         <span class="d-lg-none ms-2">Wishlist</span>
-                        <span class="badge bg-danger">{{ wishlist_count }}</span>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                              id="wishlist-count">{{ wishlist_count }}
+                        </span>
                     </a>
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link position-relative" href="{% url 'cart_detail' %}" title="Cart">
                         <i class="fas fa-shopping-cart"></i>
                         <span class="d-lg-none ms-2">Cart</span>
-                        <span class="badge bg-primary">{{cart|length}}</span>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                              id="cart-count">{{cart|length}}
+                        </span>
                     </a>
                 </li>
 
@@ -118,6 +122,11 @@
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                         <li>
                             <a class="dropdown-item" href="{% url 'profile' %}">My Profile</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'admin_dashboard' %}" class="dropdown-item">
+                                <i class="fas fa-tachometer-alt"></i> Dashboard
+                            </a>
                         </li>
                         <li>
                             <a class="dropdown-item" href="{% url 'chat_room_list' %}">Chat List</a>
