@@ -40,10 +40,10 @@
             <div class="card text-white bg-info mb-3">
                 <div class="card-header">Sales</div>
                 <div class="card-body">
-                    <h2 class="card-title">${{ total_sales|intcomma }}</h2>
+                    <h2 class="card-title">৳{{ total_sales|intcomma }}</h2>
                     <p class="card-text">
-                        <span class="badge bg-light text-dark">Today: ${{ today_sales|intcomma }}</span>
-                        <span class="badge bg-light text-dark">This Week: ${{ weekly_sales|intcomma }}</span>
+                        <span class="badge bg-light text-dark">Today: ৳{{ today_sales|intcomma }}</span>
+                        <span class="badge bg-light text-dark">This Week: ৳{{ weekly_sales|intcomma }}</span>
                     </p>
                 </div>
             </div>
@@ -261,7 +261,7 @@
                                     <td><a href="{% url 'order_detail' order.id %}">{{ order.order_number }}</a></td>
                                     <td>{{ order.user.get_full_name|default:order.user.email }}</td>
                                     <td>{{ order.created_at|date:"M d, Y" }}</td>
-                                    <td>${{ order.order_total }}</td>
+                                    <td>৳{{ order.order_total }}</td>
                                     <td>
                                         <span class="badge bg-{% if order.status == 'P' %}warning{% elif order.status == 'PR' %}info{% elif order.status == 'S' %}primary{% elif order.status == 'D' %}success{% else %}danger{% endif %}">
                                             {{ order.get_status_display }}
