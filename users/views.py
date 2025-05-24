@@ -9,10 +9,69 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.contrib.sites.shortcuts import get_current_site
 from .models import CustomUser
-from .forms import UserRegistrationForm, UserLoginForm, UserProfileForm
+from .forms import UserRegistrationForm, UserLoginForm, UserProfileForm, CustomUserUpdateForm
 from .tokens import account_activation_token
-import random
-import string
+
+
+from django.views.generic import ListView, UpdateView, DeleteView
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.urls import reverse_lazy
+from django.db import models
+
+
+class UserListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
+    model = CustomUser
+    template_name = 'users/list.html'
+    context_object_name = 'users'
+    paginate_by = 20
+
+    def test_func(self):
+        return self.request.user.is_staff
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        search = self.request.GET.get('search')
+        if search:
+            queryset = queryset.filter(
+                models.Q(username__icontains=search) |
+                models.Q(email__icontains=search) |
+                models.Q(first_name__icontains=search) |
+                models.Q(last_name__icontains=search)
+            )
+        return queryset.order_by('-date_joined')
+
+
+class UserUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = CustomUser
+    form_class = CustomUserUpdateForm
+    template_name = 'users/update.html'
+    context_object_name = 'user'
+
+    def test_func(self):
+        return self.request.user.is_staff
+
+    def get_success_url(self):
+        messages.success(self.request, f"User {self.object.email} updated successfully!")
+        return reverse_lazy('users_list')
+
+
+class UserDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = CustomUser
+    template_name = 'users/delete.html'
+    success_url = reverse_lazy('users_list')
+    context_object_name = 'user'
+
+    def test_func(self):
+        return self.request.user.is_staff
+
+    def delete(self, request, *args, **kwargs):
+        user = self.get_object()
+        if user == request.user:
+            messages.error(request, "You cannot delete your own account!")
+            return redirect('users_list')
+        messages.success(request, f"User {user.email} deleted successfully!")
+        return super().delete(request, *args, **kwargs)
+"""End user crud here"""
 
 
 def register_view(request):

@@ -1,3 +1,4 @@
+from django.core.paginator import Paginator
 from django.shortcuts import render
 from django.contrib.auth.decorators import user_passes_test
 from django.db.models import Count, Sum, Q
@@ -50,7 +51,27 @@ def admin_dashboard(request):
     active_chats = ChatRoom.objects.filter(is_active=True).count()
     unread_messages = Message.objects.filter(is_read=False).exclude(sender=request.user).count()
 
+    # User list with pagination and search
+    user_list = CustomUser.objects.all().order_by('-date_joined')
+
+    # Search functionality
+    search_query = request.GET.get('search', '')
+    if search_query:
+        user_list = user_list.filter(
+            Q(username__icontains=search_query) |
+            Q(email__icontains=search_query) |
+            Q(first_name__icontains=search_query) |
+            Q(last_name__icontains=search_query)
+        )
+
+    # Pagination
+    paginator = Paginator(user_list, 10)  # Show 10 users per page
+    page_number = request.GET.get('page')
+    users_page = paginator.get_page(page_number)
+
     context = {
+        'users_page': users_page,
+        'search_query': search_query,
         'total_users': total_users,
         'new_users_today': new_users_today,
         'new_users_week': new_users_week,

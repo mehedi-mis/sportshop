@@ -1,8 +1,25 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm
 from .models import CustomUser
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
+
+
+class CustomUserUpdateForm(UserChangeForm):
+    password = None  # Remove password field from update form
+
+    class Meta:
+        model = CustomUser
+        fields = [
+            'username', 'email', 'first_name', 'last_name',
+            'gender', 'date_of_birth', 'profile_picture',
+            'phone', 'address', 'city', 'state', 'zip_code', 'country',
+            'is_active', 'is_staff', 'is_superuser', 'is_email_verified'
+        ]
+        widgets = {
+            'date_of_birth': forms.DateInput(attrs={'type': 'date'}),
+            'address': forms.Textarea(attrs={'rows': 3}),
+        }
 
 
 class UserRegistrationForm(UserCreationForm):

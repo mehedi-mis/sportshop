@@ -49,7 +49,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Second Row Cards -->
     <div class="row mt-1">
         <!-- Custom Jerseys -->
@@ -103,7 +103,138 @@
             </div>
         </div>
     </div>
-    
+
+        <!-- User Row Cards -->
+    <div class="row mt-1">
+        <div class="card mt-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-users me-2"></i>User Management
+                    <span class="badge bg-light text-dark float-end">{{ users_page.paginator.count }} users</span>
+                </h5>
+            </div>
+            <div class="card-body">
+                <!-- Search Form -->
+                <form method="get" class="mb-4">
+                    <div class="input-group">
+                        <input type="text" name="search" class="form-control"
+                               placeholder="Search users..." value="{{ search_query }}">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-search"></i>
+                        </button>
+                        <a href="?page=1" class="btn btn-secondary">Reset</a>
+                    </div>
+                </form>
+
+                <!-- User Table -->
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Profile</th>
+                                <th>Email</th>
+                                <th>Name</th>
+                                <th>Joined</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in users_page %}
+                            <tr>
+                                <td>{{ user.id }}</td>
+                                <td>
+                                    {% if user.profile_picture %}
+                                    <img src="{{ user.profile_picture.url }}"
+                                         class="rounded-circle"
+                                         width="40"
+                                         height="40"
+                                         alt="{{ user.username }}">
+                                    {% else %}
+                                    <div class="bg-secondary rounded-circle d-flex align-items-center justify-content-center"
+                                         style="width: 40px; height: 40px;">
+                                        <i class="fas fa-user text-white"></i>
+                                    </div>
+                                    {% endif %}
+                                </td>
+                                <td>{{ user.email }}</td>
+                                <td>
+                                    {{ user.get_full_name|default:"-" }}
+                                    {% if user.is_staff %}
+                                    <span class="badge bg-info">Staff</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ user.date_joined|date:"M d, Y" }}</td>
+                                <td>
+                                    {% if user.is_active %}
+                                    <span class="badge bg-success">Active</span>
+                                    {% else %}
+                                    <span class="badge bg-danger">Inactive</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{% url 'admin:users_customuser_change' user.id %}"
+                                       class="btn btn-sm btn-outline-primary"
+                                       title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="{% url 'admin:users_customuser_delete' user.id %}"
+                                       class="btn btn-sm btn-outline-danger"
+                                       title="Delete">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="7" class="text-center">No users found</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                {% if users_page.paginator.num_pages > 1 %}
+                <nav aria-label="User pagination">
+                    <ul class="pagination justify-content-center">
+                        {% if users_page.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1&search={{ search_query }}">First</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ users_page.previous_page_number }}&search={{ search_query }}">Previous</a>
+                        </li>
+                        {% endif %}
+
+                        {% for num in users_page.paginator.page_range %}
+                        {% if users_page.number == num %}
+                        <li class="page-item active">
+                            <a class="page-link" href="?page={{ num }}&search={{ search_query }}">{{ num }}</a>
+                        </li>
+                        {% elif num > users_page.number|add:'-3' and num < users_page.number|add:'3' %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ num }}&search={{ search_query }}">{{ num }}</a>
+                        </li>
+                        {% endif %}
+                        {% endfor %}
+
+                        {% if users_page.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ users_page.next_page_number }}&search={{ search_query }}">Next</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ users_page.paginator.num_pages }}&search={{ search_query }}">Last</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
     <!-- Recent Activity -->
     <div class="row mt-4">
         <!-- Recent Orders -->
