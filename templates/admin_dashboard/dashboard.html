@@ -174,12 +174,12 @@
                                     {% endif %}
                                 </td>
                                 <td>
-                                    <a href="{% url 'admin:users_customuser_change' user.id %}"
+                                    <a href="{% url 'users_update' user.id %}?next={% url 'admin_dashboard' %}"
                                        class="btn btn-sm btn-outline-primary"
                                        title="Edit">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <a href="{% url 'admin:users_customuser_delete' user.id %}"
+                                    <a href="{% url 'users_delete' user.id %}?next={% url 'admin_dashboard' %}"
                                        class="btn btn-sm btn-outline-danger"
                                        title="Delete">
                                         <i class="fas fa-trash"></i>

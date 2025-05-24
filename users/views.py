@@ -52,7 +52,14 @@ class UserUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
     def get_success_url(self):
         messages.success(self.request, f"User {self.object.email} updated successfully!")
-        return reverse_lazy('users_list')
+
+        # Check for 'next' parameter in the URL (e.g., ?next=admin_dashboard)
+        next_url = self.request.GET.get('next')
+
+        if next_url:
+            return next_url  # Redirect to the URL passed in 'next' (e.g., admin_dashboard)
+        else:
+            return reverse_lazy('users_list')  # Default fallback
 
 
 class UserDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
