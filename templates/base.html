@@ -43,7 +43,7 @@
 {% endif %}
 
 <!-- Main Content Block -->
-<main class="flex-shrink-0">
+<main class="flex-shrink-0" style="min-height: calc(60vh - 120px);">
     {% block content %}{% endblock %}
 </main>
 
@@ -90,7 +90,7 @@
 
     // Check immediately and then every 30 seconds
     checkNotifications();
-    setInterval(checkNotifications, 30000);
+    setInterval(checkNotifications, 20000);
 
 // Back to top button
 $(document).ready(function(){

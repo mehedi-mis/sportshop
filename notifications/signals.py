@@ -1,7 +1,7 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.urls import reverse
-from orders.models import Order, OrderItem
+from orders.models import Order
 from chat.models import Message
 from custom_jerseys.models import CustomJerseyOrder
 from notifications.models import Notification

@@ -20,7 +20,7 @@
         </div>
         
         <div class="card-body chat-messages" style="height: 400px; overflow-y: auto;">
-            {% for message in messages %}
+            {% for message in chat_messages %}
             <div class="mb-3 {% if message.sender == request.user %}text-end{% endif %}">
                 <div class="d-flex {% if message.sender == request.user %}justify-content-end{% endif %}">
                     <div class="card {% if message.sender == request.user %}bg-primary text-white{% else %}bg-light{% endif %}" style="max-width: 70%;">

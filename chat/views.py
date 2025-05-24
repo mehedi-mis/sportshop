@@ -42,7 +42,7 @@ class ChatRoomDetailView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['form'] = MessageForm()
-        context['messages'] = self.object.messages.all().order_by('created_at')
+        context['chat_messages'] = self.object.messages.all().order_by('created_at')
         return context
 
     def get_queryset(self):

@@ -13,6 +13,7 @@ urlpatterns = [
     path('jersey/', include('custom_jerseys.urls')),
     path('chat/', include('chat.urls')),
     path('notifications/', include('notifications.urls')),
+    path('wishlist/', include('wishlist.urls')),
     path('', include('products.urls')),
 ]
 
