@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Play Sports Trivia | SportsHub{% endblock %}
+
+{% block extra_css %}
+<style>
+    .option-btn {
+        transition: all 0.3s;
+        text-align: left;
+        position: relative;
+        padding-left: 50px;
+    }
+    .option-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    .option-number {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(0,0,0,0.1);
+        width: 25px;
+        height: 25px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+    }
+    #result {
+        transition: all 0.5s ease;
+    }
+    .sport-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card shadow position-relative">
+                <span class="sport-badge badge bg-{{ question.get_sport_display|lower }}">
+                    {{ question.get_sport_display }}
+                </span>
+                
+                <div class="card-header bg-primary text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h3 class="mb-0">Sports Trivia Challenge</h3>
+                        <span class="badge bg-light text-dark">
+                            {{ question.get_difficulty_display }}
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-body">
+                    <h4 class="mb-4">{{ question.question }}</h4>
+                    
+                    <div class="options-container">
+                        {% for option in options %}
+                        <button class="option-btn btn btn-outline-primary btn-block mb-3 py-3"
+                                data-answer="{{ forloop.counter }}">
+                            <span class="option-number">{{ forloop.counter }}</span>
+                            {{ option }}
+                        </button>
+                        {% endfor %}
+                    </div>
+                    
+                    <div id="result" class="mt-4" style="display: none;">
+                        <div class="alert" id="result-alert">
+                            <h4 id="result-text" class="d-flex align-items-center"></h4>
+                            <div id="explanation" class="mt-3 p-3 bg-light rounded"></div>
+                            <div class="d-flex justify-content-between mt-3">
+                                <span id="points-earned" class="fw-bold"></span>
+                                <span id="leaderboard-position" class="text-muted"></span>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'game_home' %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-home me-2"></i> Back to Home
+                            </a>
+                            <button id="next-question" class="btn btn-primary">
+                                Next Question <i class="fas fa-arrow-right ms-2"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+$(document).ready(function() {
+    const questionId = "{{ question.id }}";
+    
+    $('.option-btn').click(function() {
+        const selectedBtn = $(this);
+        const selectedAnswer = selectedBtn.data('answer');
+        $('.option-btn').prop('disabled', true);
+        
+        // Show loading state
+        selectedBtn.html(`<span class="option-number">${selectedAnswer}</span> Checking...`);
+        
+        // Send answer to server
+        $.ajax({
+            url: "{% url 'submit_answer' %}",
+            method: 'POST',
+            data: {
+                'question_id': questionId,
+                'answer': selectedAnswer,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success: function(response) {
+                // Show result
+                const resultDiv = $('#result');
+                const resultAlert = $('#result-alert');
+                const resultText = $('#result-text');
+                const pointsEarned = $('#points-earned');
+                const explanation = $('#explanation');
+                const leaderboardPosition = $('#leaderboard-position');
+                
+                if (response.correct) {
+                    resultAlert.removeClass('alert-danger').addClass('alert-success');
+                    resultText.html('<i class="fas fa-check-circle me-2"></i> Correct Answer!');
+                    pointsEarned.text(`+${response.points_earned} points earned`);
+                    
+                    // Highlight correct answer
+                    $(`.option-btn[data-answer="${response.correct_answer}"]`)
+                        .removeClass('btn-outline-primary')
+                        .addClass('btn-success');
+                } else {
+                    resultAlert.removeClass('alert-success').addClass('alert-danger');
+                    resultText.html('<i class="fas fa-times-circle me-2"></i> Wrong Answer!');
+                    pointsEarned.text(`No points earned`);
+                    
+                    // Highlight correct answer and wrong answer
+                    $(`.option-btn[data-answer="${response.correct_answer}"]`)
+                        .removeClass('btn-outline-primary')
+                        .addClass('btn-success');
+                    selectedBtn
+                        .removeClass('btn-outline-primary')
+                        .addClass('btn-danger');
+                }
+                
+                // Show explanation if available
+                if (response.explanation) {
+                    explanation.html(`<strong>Explanation:</strong> ${response.explanation}`);
+                } else {
+                    explanation.hide();
+                }
+                
+                // Show leaderboard position if in top 5
+                if (response.in_top5) {
+                    leaderboardPosition.text(`You're #${response.leaderboard_position} on the leaderboard!`);
+                } else {
+                    leaderboardPosition.text(`Total score: ${response.total_score} pts`);
+                }
+                
+                resultDiv.slideDown();
+            },
+            error: function() {
+                alert('An error occurred. Please try again.');
+                window.location.reload();
+            }
+        });
+    });
+    
+    $('#next-question').click(function() {
+        window.location.reload();  // Load a new random question
+    });
+});
+</script>
+{% endblock %}
