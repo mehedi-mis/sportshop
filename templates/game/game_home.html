@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+{% load math_filters %}
+{% load static %}
+
+{% block title %}Sports Trivia Challenge | SportsHub{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-md-8 mx-auto text-center">
+            <h1 class="display-4 mb-4">Sports Trivia Challenge</h1>
+            <p class="lead">Test your sports knowledge and compete for a spot on our leaderboard!</p>
+            
+            {% if current_prize %}
+            <div class="alert alert-info">
+                <h4 class="alert-heading">
+                    <i class="fas fa-trophy me-2"></i> This Month's Prize
+                </h4>
+                <p>{{ current_prize.prize_description }}</p>
+                <hr>
+                <p class="mb-0">Top 5 players will receive: <strong>{{ current_prize.get_prize_type_display }}</strong></p>
+            </div>
+            {% endif %}
+            
+            <div class="my-5">
+                <a href="{% url 'play_game' %}" class="btn btn-primary btn-lg px-5">
+                    <i class="fas fa-play me-2"></i> Play Now
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-5">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">
+                        <i class="fas fa-medal me-2"></i> Monthly Leaderboard
+                    </h3>
+                </div>
+                <div class="card-body">
+                    {% if leaderboard %}
+                        <ol class="list-group list-group-numbered">
+                            {% for entry in leaderboard %}
+                            <li class="list-group-item d-flex justify-content-between align-items-start">
+                                <div class="ms-2 me-auto">
+                                    <div class="fw-bold">
+                                        {% if entry.user.profile_picture %}
+                                        <img src="{{ entry.user.profile_picture.url }}" 
+                                             class="rounded-circle me-2" 
+                                             width="30" height="30" 
+                                             alt="{{ entry.user.username }}">
+                                        {% endif %}
+                                        {{ entry.user.username }}
+                                    </div>
+                                    <small class="text-muted">
+                                        Correct: {{ entry.correct_answers }} | Wrong: {{ entry.wrong_answers }}
+                                    </small>
+                                </div>
+                                <span class="badge bg-primary rounded-pill">{{ entry.score }} pts</span>
+                            </li>
+                            {% endfor %}
+                        </ol>
+                    {% else %}
+                        <p class="text-muted">No scores yet this month. Be the first!</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-info text-white">
+                    <h3 class="mb-0">
+                        <i class="fas fa-user me-2"></i> Your Progress
+                    </h3>
+                </div>
+                <div class="card-body">
+                    {% if user_score %}
+                        <div class="text-center">
+                            <h2 class="display-4">{{ user_score.score }} pts</h2>
+                            <div class="progress mb-3">
+                                <div class="progress-bar progress-bar-striped" 
+                                     role="progressbar" 
+                                     style="width: {{ user_score.correct_answers|add:user_score.wrong_answers|default:1|percentage:user_score.correct_answers }}%">
+                                    {{ user_score.correct_answers }} correct
+                                </div>
+                            </div>
+                            
+                            {% if has_discount %}
+                                <div class="alert alert-success mt-3">
+                                    <i class="fas fa-trophy me-2"></i>
+                                    You've earned a 50% discount! Check your profile to use it.
+                                </div>
+                            {% elif is_in_top5 %}
+                                <div class="alert alert-warning mt-3">
+                                    <i class="fas fa-medal me-2"></i>
+                                    You're in the Top 5! Keep playing to secure your discount.
+                                </div>
+                            {% else %}
+                                <p class="text-muted">
+                                    {% if leaderboard|length > 0 %}
+                                        You need {{ leaderboard.0.score|subtract:user_score.score|add:1 }} more points to reach #1
+                                    {% else %}
+                                        You're leading the pack!
+                                    {% endif %}
+                                </p>
+                            {% endif %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted">You haven't played yet this month.</p>
+                        <a href="{% url 'play_game' %}" class="btn btn-outline-primary">
+                            Play Your First Game
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+            
+            {% if has_discount %}
+            <div class="card shadow mt-4">
+                <div class="card-header bg-success text-white">
+                    <h3 class="mb-0">
+                        <i class="fas fa-gift me-2"></i> Your Prize
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <p>You've earned a <strong>50% discount</strong> on all products!</p>
+                    <a href="{% url 'profile' %}" class="btn btn-success">
+                        View Your Discount Code
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

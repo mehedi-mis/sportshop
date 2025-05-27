@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'cart',
     'chat',
     'custom_jerseys',
-    # 'gaming',
+    'leaderboard',
     'notifications',
     'orders',
     'products',

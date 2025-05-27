@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Current Leaderboard{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h1 class="h3 mb-0">Monthly Leaderboard - {{ leaderboard.get_month_display }} {{ leaderboard.year }}</h1>
+        </div>
+        <div class="card-body">
+            {% if leaderboard %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Position</th>
+                            <th>User</th>
+                            <th>Score</th>
+                            {% if user_entry %}
+                            <th>Your Position</th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for entry in leaderboard.entries.all|slice:":10" %}
+                        <tr class="{% if user_entry and entry.position == user_entry.position %}table-info{% endif %}">
+                            <td>
+                                {% if entry.position == 1 %}
+                                <i class="fas fa-trophy text-warning"></i>
+                                {% elif entry.position == 2 %}
+                                <i class="fas fa-medal text-secondary"></i>
+                                {% elif entry.position == 3 %}
+                                <i class="fas fa-medal text-danger"></i>
+                                {% endif %}
+                                {{ entry.position }}
+                            </td>
+                            <td>{{ entry.user.email }}</td>
+                            <td>{{ entry.score }}</td>
+                            {% if user_entry %}
+                            <td>
+                                {% if entry.position == user_entry.position %}
+                                <span class="badge bg-info">You</span>
+                                {% endif %}
+                            </td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            {% if user_entry and user_entry.position > 10 %}
+            <div class="alert alert-info mt-3">
+                Your position: <strong>#{{ user_entry.position }}</strong> with {{ user_entry.score }} points.
+                {% if user_entry.position <= 5 and user_entry.discount_awarded %}
+                <span class="badge bg-success ms-2">50% Discount Awarded!</span>
+                {% elif user_entry.position <= 5 %}
+                <span class="badge bg-warning ms-2">Discount Pending Approval</span>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            {% else %}
+            <div class="alert alert-warning">
+                No active leaderboard at this time. Check back later!
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

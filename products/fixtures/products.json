@@ -1,0 +1,65 @@
+[
+  {
+    "model": "products.product",
+    "pk": 1,
+    "fields": {
+      "name": "Professional Football",
+      "slug": "professional-football",
+      "category": 2,
+      "sku": "FB-001",
+      "price": "49.99",
+      "discount_price": "39.99",
+      "stock": 100,
+      "description": "Official size and weight professional football",
+      "size": "",
+      "color": "White/Black",
+      "brand": "Nike",
+      "is_featured": true,
+      "is_active": true,
+      "created_at": "2023-01-01T00:00:00Z",
+      "updated_at": "2023-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 2,
+    "fields": {
+      "name": "Basketball Hoop",
+      "slug": "basketball-hoop",
+      "category": 3,
+      "sku": "BB-001",
+      "price": "199.99",
+      "discount_price": null,
+      "stock": 25,
+      "description": "Adjustable basketball hoop for home use",
+      "size": "",
+      "color": "Blue/White",
+      "brand": "Spalding",
+      "is_featured": false,
+      "is_active": true,
+      "created_at": "2023-01-01T00:00:00Z",
+      "updated_at": "2023-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 3,
+    "fields": {
+      "name": "Running Shoes",
+      "slug": "running-shoes",
+      "category": 1,
+      "sku": "RS-001",
+      "price": "89.99",
+      "discount_price": "79.99",
+      "stock": 50,
+      "description": "Lightweight running shoes for all terrains",
+      "size": "M",
+      "color": "Black/Red",
+      "brand": "Adidas",
+      "is_featured": true,
+      "is_active": true,
+      "created_at": "2023-01-01T00:00:00Z",
+      "updated_at": "2023-01-01T00:00:00Z"
+    }
+  }
+]
