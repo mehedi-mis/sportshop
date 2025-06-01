@@ -53,11 +53,11 @@
                     <a href="{% url 'product_create' %}" class="list-group-item list-group-item-action">
                         <i class="fas fa-file-circle-plus me-2"></i>Add Product
                     </a>
+                    {% endif %}
 
                     <a href="{% url 'room_create' %}" class="list-group-item list-group-item-action">
                         <i class="fas fa-comment-medical me-2"></i>Create Chat
                     </a>
-                    {% endif %}
                     <a href="{% url 'logout' %}" class="list-group-item list-group-item-action">
                         <i class="fas fa-sign-out me-2"></i>Logout
                     </a>
