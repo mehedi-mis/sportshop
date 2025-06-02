@@ -18,7 +18,8 @@ def admin_dashboard(request):
     last_30_days = today - timezone.timedelta(days=30)
 
     # User statistics
-    total_users = CustomUser.objects.count()
+    user_queryset = CustomUser.objects.all()
+    total_users = user_queryset.count()
     new_users_today = CustomUser.objects.filter(date_joined__date=today).count()
     new_users_week = CustomUser.objects.filter(date_joined__date__gte=last_7_days).count()
 
