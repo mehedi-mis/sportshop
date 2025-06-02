@@ -34,8 +34,8 @@
                     <h5>Account Settings</h5>
                 </div>
                 <div class="list-group list-group-flush">
-                    <a href="{% url 'profile' %}" class="list-group-item list-group-item-action active">
-                        <i class="fas fa-user me-2"></i>Profile Information
+                    <a href="{% url 'update_profile' %}" class="list-group-item list-group-item-action active">
+                        <i class="fas fa-user me-2"></i>Update Profile
                     </a>
                     <a href="{% url 'order_list' %}" class="list-group-item list-group-item-action">
                         <i class="fas fa-shopping-bag me-2"></i>Order History
@@ -58,17 +58,12 @@
                     <a href="{% url 'room_create' %}" class="list-group-item list-group-item-action">
                         <i class="fas fa-comment-medical me-2"></i>Create Chat
                     </a>
+                    <a href="{% url 'password_change' %}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-key me-2"></i>Change Password
+                    </a>
                     <a href="{% url 'logout' %}" class="list-group-item list-group-item-action">
                         <i class="fas fa-sign-out me-2"></i>Logout
                     </a>
-                    {% comment %}
-                    <a href="{% url 'wishlist' %}" class="list-group-item list-group-item-action">
-                        <i class="fas fa-heart me-2"></i>Wishlist
-                    </a>
-                    <a href="{% url 'password_change' %}" class="list-group-item list-group-item-action">
-                        <i class="fas fa-lock me-2"></i>Change Password
-                    </a>
-                    {% endcomment %}
                 </div>
             </div>
         </div>

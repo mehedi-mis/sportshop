@@ -5,6 +5,16 @@ from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 
 
+class CustomUserUpdateForm2(forms.ModelForm):
+    class Meta:
+        model = CustomUser
+        fields = [
+            'first_name', 'last_name', 'email', 'phone',
+            'gender', 'date_of_birth', 'profile_picture',
+            'address', 'city', 'state', 'zip_code', 'country'
+        ]
+
+
 class CustomUserUpdateForm(UserChangeForm):
     password = None  # Remove password field from update form
 

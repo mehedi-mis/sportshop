@@ -1,0 +1,15 @@
+{% load socialaccount %}
+
+<div class="social-login">
+  {% for provider in socialaccount_providers %}
+    {% if provider.id == 'google' %}
+      <a href="{% provider_login_url provider.id process='login' %}" class="btn btn-danger w-100 mb-2">
+        <i class="fab fa-google me-2"></i> Continue with Google
+      </a>
+    {% else %}
+      <a href="{% provider_login_url provider.id process='login' %}" class="btn btn-secondary w-100 mb-2">
+        Continue with {{ provider.name }}
+      </a>
+    {% endif %}
+  {% endfor %}
+</div>

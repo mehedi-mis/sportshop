@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container-fluid my-5">
+    <div class="row">
+        <!-- Profile Card -->
+        <div class="col-md-3">
+            <div class="card mb-4">
+                <div class="card-body text-center">
+                    <div class="profile-picture-container mb-3">
+                        {% if user.profile_picture %}
+                        <img src="{{ user.profile_picture.url }}"
+                             class="rounded-circle img-fluid"
+                             alt="Profile Picture"
+                             style="width: 150px; height: 150px; object-fit: cover;">
+                        {% else %}
+                        <img src="{% static 'images/default_profile.png' %}"
+                             class="rounded-circle img-fluid"
+                             alt="Default Profile Picture"
+                             style="width: 150px; height: 150px; object-fit: cover;">
+                        {% endif %}
+                    </div>
+                    <h5 class="card-title">{{ user.get_full_name|default:user.email }}</h5>
+                    <p class="text-muted mb-1">{{ user.email }}</p>
+                    <p class="text-muted">Member since {{ user.date_joined|date:"F Y" }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+
+            <!-- Profile Update Form -->
+            <div class="card p-4">
+                <h2>Update Profile</h2>
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <button type="submit" class="btn btn-primary mt-3">Update</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Preview profile picture before upload
+    document.getElementById('id_profile_picture').addEventListener('change', function(event) {
+        const [file] = event.target.files;
+        if (file) {
+            const preview = document.querySelector('.profile-picture-container img');
+            preview.src = URL.createObjectURL(file);
+        }
+    });
+</script>
+{% endblock %}

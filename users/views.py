@@ -9,7 +9,7 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.contrib.sites.shortcuts import get_current_site
 from .models import CustomUser
-from .forms import UserRegistrationForm, UserLoginForm, UserProfileForm, CustomUserUpdateForm
+from .forms import UserRegistrationForm, UserLoginForm, UserProfileForm, CustomUserUpdateForm, CustomUserUpdateForm2
 from .tokens import account_activation_token
 
 
@@ -78,7 +78,6 @@ class UserDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
             return redirect('users_list')
         messages.success(request, f"User {user.email} deleted successfully!")
         return super().delete(request, *args, **kwargs)
-"""End user crud here"""
 
 
 def register_view(request):
@@ -210,3 +209,16 @@ def profile_view(request):
         'user': user
     }
     return render(request, 'users/profile.html', context)
+
+
+@login_required
+def update_profile(request):
+    if request.method == 'POST':
+        form = CustomUserUpdateForm2(request.POST, request.FILES, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('profile')  # redirect to profile page
+    else:
+        form = CustomUserUpdateForm2(instance=request.user)
+
+    return render(request, 'accounts/update_profile.html', {'form': form})
