@@ -16,8 +16,6 @@ class Order(models.Model):
 
     PAYMENT_CHOICES = [
         ('COD', 'Cash on Delivery'),
-        ('CC', 'Credit Card'),
-        ('PP', 'PayPal'),
         ('STRIPE', 'Stripe'),
     ]
 
@@ -50,6 +48,10 @@ class Order(models.Model):
     def get_total_with_shipping(self):
         return self.order_total + self.shipping_cost + self.tax
 
+    def get_total_float(self):
+        """Helper method to get total as float for JSON responses"""
+        return float(self.get_total_with_shipping())
+
     def mark_as_paid(self):
         self.is_paid = True
         self.paid_at = timezone.now()
@@ -74,3 +76,7 @@ class OrderItem(models.Model):
 
     def get_cost(self):
         return self.price * self.quantity
+
+    def get_price_float(self):
+        """Helper method to get price as float for JSON responses"""
+        return float(self.price)

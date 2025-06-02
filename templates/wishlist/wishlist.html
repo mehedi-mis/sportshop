@@ -23,7 +23,7 @@
                             {{ item.product.name }}
                         </a>
                     </h5>
-                    <p class="card-text">${{ item.product.price }}</p>
+                    <p class="card-text">৳{{ item.product.price }}</p>
                 </div>
                 <div class="card-footer bg-white d-flex justify-content-between">
                     <form action="{% url 'cart_add' item.product.id %}" method="post">

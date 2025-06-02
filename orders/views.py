@@ -1,15 +1,21 @@
 from datetime import datetime
 
-from django.views.generic import ListView, DetailView, CreateView, UpdateView
+import stripe
+
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.conf import settings
 from .models import Order, OrderItem
 from .forms import OrderForm, OrderStatusForm
 from cart.utils import SessionCart
+
+
+stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
 class OrderListView(LoginRequiredMixin, ListView):
@@ -35,6 +41,23 @@ class OrderDetailView(LoginRequiredMixin, DetailView):
         return Order.objects.filter(user=self.request.user)
 
 
+class OrderStatusUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Order
+    form_class = OrderStatusForm
+    template_name = 'orders/order_status_update.html'
+
+    def test_func(self):
+        return self.request.user.is_staff
+
+    def form_valid(self, form):
+        order = form.save()
+        if order.status == 'D' and not order.delivered_at:
+            order.delivered_at = datetime.now()
+            order.save()
+        messages.success(self.request, f"Order #{order.order_number} status updated to {order.get_status_display()}")
+        return redirect('order_detail', pk=order.pk)
+
+
 class OrderCreateView(LoginRequiredMixin, CreateView):
     model = Order
     form_class = OrderForm
@@ -46,6 +69,8 @@ class OrderCreateView(LoginRequiredMixin, CreateView):
         cart = SessionCart(self.request)
         context['cart'] = cart
         context['cart_items'] = list(cart.__iter__())
+        context['stripe_public_key'] = settings.STRIPE_PUBLIC_KEY
+        context['stripe_amount'] = int(cart.get_total_price() * 100)  # Stripe uses cents
         return context
 
     def form_valid(self, form):
@@ -67,40 +92,80 @@ class OrderCreateView(LoginRequiredMixin, CreateView):
                 price=item['price'],
                 quantity=item['quantity']
             )
+        if order.payment_method == 'STRIPE':
+            return self.stripe_checkout(cart, order)
+        else:
+            order.status = 'P'
+            order.save()
+            # create cart session
+            cart.clear()
+            messages.success(self.request, "Order created successfully")
+            return redirect('order_detail', pk=order.pk)
 
-        # Clear the cart
-        cart.clear()
+    def stripe_checkout(self, cart, order):
+        # Redirect to Stripe checkout session
+        stripe.api_key = settings.STRIPE_SECRET_KEY
 
-        # Send confirmation email
-        self.send_order_confirmation_email(order)
+        line_items = [
+            {
+                'price_data': {
+                    'currency': 'usd',
+                    'product_data': {
+                        'name': item['product'].name,
+                    },
+                    'unit_amount': int(item['price'] * 100),  # Stripe uses cents
+                },
+                'quantity': item['quantity'],
+            } for item in cart
+        ]
 
-        messages.success(self.request, "Your order has been placed successfully!")
-        return redirect('order_detail', pk=order.pk)
-
-    def send_order_confirmation_email(self, order):
-        subject = f"Order Confirmation - #{order.order_number}"
-        message = f"Thank you for your order!\n\nOrder Number: {order.order_number}\nTotal: ${order.order_total}"
-        send_mail(
-            subject,
-            message,
-            settings.DEFAULT_FROM_EMAIL,
-            [order.user.email],
-            fail_silently=False,
+        checkout_session = stripe.checkout.Session.create(
+            payment_method_types=['card'],
+            line_items=line_items,
+            mode='payment',
+            success_url=self.request.build_absolute_uri(
+                reverse_lazy('payment_success')) + f'?session_id={{CHECKOUT_SESSION_ID}}',
+            cancel_url=self.request.build_absolute_uri(reverse_lazy('payment_cancelled')),
+            metadata={'order_id': order.id}
         )
 
+        return redirect(checkout_session.url)
 
-class OrderStatusUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
-    model = Order
-    form_class = OrderStatusForm
-    template_name = 'orders/order_status_update.html'
 
-    def test_func(self):
-        return self.request.user.is_staff
+class PaymentSuccessView(LoginRequiredMixin, TemplateView):
+    template_name = 'orders/payment_success.html'
 
-    def form_valid(self, form):
-        order = form.save()
-        if order.status == 'D' and not order.delivered_at:
-            order.delivered_at = datetime.now()
-            order.save()
-        messages.success(self.request, f"Order #{order.order_number} status updated to {order.get_status_display()}")
-        return redirect('order_detail', pk=order.pk)
+    def get(self, request, *args, **kwargs):
+        session_id = request.GET.get('session_id')
+        if session_id:
+            try:
+                # Retrieve the Stripe session
+                session = stripe.checkout.Session.retrieve(session_id)
+
+                # Get the order from metadata
+                order = Order.objects.get(
+                    id=session.metadata.order_id,
+                    user=request.user
+                )
+
+                # Mark as paid
+                order.mark_as_paid()
+
+                # Clear the cart
+                SessionCart(request).clear()
+
+                # Clear the session order ID
+                if 'current_order_id' in request.session:
+                    del request.session['current_order_id']
+
+                return render(request, self.template_name, {'order': order})
+
+            except Exception as e:
+                messages.error(request, str(e))
+                return redirect('order_list')
+        messages.success(self.request, "Your order is not valid!")
+        return redirect('order_list')
+
+
+class PaymentCancelledView(LoginRequiredMixin, TemplateView):
+    template_name = 'orders/payment_cancelled.html'

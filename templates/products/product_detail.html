@@ -27,10 +27,10 @@
             <h1>{{ product.name }}</h1>
             <div class="d-flex align-items-center mb-3">
                 {% if product.discount_price %}
-                <h3 class="text-danger me-3">${{ product.discount_price }}</h3>
-                <h5 class="text-muted text-decoration-line-through">${{ product.price }}</h5>
+                <h3 class="text-danger me-3">৳{{ product.discount_price }}</h3>
+                <h5 class="text-muted text-decoration-line-through">৳{{ product.price }}</h5>
                 {% else %}
-                <h3>${{ product.price }}</h3>
+                <h3>৳{{ product.price }}</h3>
                 {% endif %}
             </div>
 

@@ -28,7 +28,7 @@
                             {{ order.get_status_display }}
                         </span>
                     </td>
-                    <td>${{ order.price }}</td>
+                    <td>৳{{ order.price }}</td>
                     <td>{{ order.created_at|date:"M d, Y" }}</td>
                     <td>
                         <a href="{% url 'custom_jersey_detail' order.pk %}" class="btn btn-sm btn-outline-primary">
