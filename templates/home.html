@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ site_config.site_name }} - Home{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+
+  <!-- Site Header -->
+  <header class="d-flex align-items-center mb-4">
+    <img src="{{ site_config.site_logo.url }}" alt="{{ site_config.site_name }}" height="60" class="me-3">
+    <h1>{{ site_config.site_name }}</h1>
+  </header>
+
+  <!-- Banner Carousel -->
+  {% if banners %}
+  <div id="bannerCarousel" class="carousel slide mb-5" data-bs-ride="carousel">
+    <div class="carousel-inner">
+      {% for banner in banners %}
+      <div class="carousel-item {% if forloop.first %}active{% endif %}">
+        {% if banner.link %}
+        <a href="{{ banner.link }}">
+          <img src="{{ banner.image.url }}" class="d-block w-100" alt="{{ banner.title }}">
+        </a>
+        {% else %}
+        <img src="{{ banner.image.url }}" class="d-block w-100" alt="{{ banner.title }}">
+        {% endif %}
+        <div class="carousel-caption d-none d-md-block">
+          <h5>{{ banner.title }}</h5>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#bannerCarousel" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon"></span>
+      <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#bannerCarousel" data-bs-slide="next">
+      <span class="carousel-control-next-icon"></span>
+      <span class="visually-hidden">Next</span>
+    </button>
+  </div>
+  {% endif %}
+
+  <!-- Featured Products -->
+  <h2 class="mb-4">Featured Products</h2>
+  <div class="row row-cols-1 row-cols-md-4 g-4">
+    {% for product in products %}
+    <div class="col">
+      <div class="card h-100">
+        <img src="{{ product.images.first.image.url }}" class="card-img-top" alt="{{ product.name }}">
+        <div class="card-body">
+          <h5 class="card-title">{{ product.name }}</h5>
+          <p class="card-text">{{ product.short_description|default:"No description" }}</p>
+        </div>
+        <div class="card-footer">
+          <strong>${{ product.price }}</strong>
+          <a href="{% url 'product_detail' product.slug %}" class="btn btn-primary btn-sm float-end">View</a>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <p>No products available at the moment.</p>
+    {% endfor %}
+  </div>
+
+</div>
+{% endblock %}

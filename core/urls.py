@@ -16,7 +16,8 @@ urlpatterns = [
     path('notifications/', include('notifications.urls')),
     path('wishlist/', include('wishlist.urls')),
     path('leaderboard/', include('leaderboard.urls')),
-    path('', include('products.urls')),
+    path('products/', include('products.urls')),
+    path('', include('website.urls')),
 ]
 
 if settings.DEBUG:
