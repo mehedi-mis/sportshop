@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>All Banners</h2>
+        <a href="{% url 'banner_create' %}" class="btn btn-primary">Add Banner</a>
+    </div>
+
+    <div class="list-group shadow">
+        {% for banner in banners %}
+        <div class="list-group-item d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+                <img src="{{ banner.image.url }}" alt="{{ banner.title }}" class="me-3 rounded" height="50" />
+                <div>
+                    <h5 class="mb-1">{{ banner.title }}</h5>
+                    {% if banner.link %}
+                        <small><a href="{{ banner.link }}" class="link" target="_blank">{{ banner.link }}</a></small>
+                    {% endif %}
+                </div>
+            </div>
+            <div>
+                <a href="{% url 'banner_detail' banner.pk %}" class="btn btn-sm btn-info me-1">View</a>
+                <a href="{% url 'banner_edit' banner.pk %}" class="btn btn-sm btn-warning me-1">Edit</a>
+                <a href="{% url 'banner_delete' banner.pk %}" class="btn btn-sm btn-danger">Delete</a>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-muted">No banners available.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

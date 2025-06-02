@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'orders',
     'products',
     'users',
-    # 'website',
+    'website',
     'wishlist',
 
     # external library
