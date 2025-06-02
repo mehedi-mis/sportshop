@@ -1,5 +1,5 @@
 from datetime import datetime
-
+from decimal import Decimal
 import stripe
 
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, TemplateView
@@ -63,6 +63,7 @@ class OrderCreateView(LoginRequiredMixin, CreateView):
     form_class = OrderForm
     template_name = 'orders/order_create.html'
     success_url = reverse_lazy('order_list')
+    shipping_cost = Decimal('100.00')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -70,7 +71,8 @@ class OrderCreateView(LoginRequiredMixin, CreateView):
         context['cart'] = cart
         context['cart_items'] = list(cart.__iter__())
         context['stripe_public_key'] = settings.STRIPE_PUBLIC_KEY
-        context['stripe_amount'] = int(cart.get_total_price() * 100)  # Stripe uses cents
+        context['stripe_amount'] = int(cart.get_total_price() * 100)
+        context['shipping_cost'] = self.shipping_cost
         return context
 
     def form_valid(self, form):
@@ -109,7 +111,7 @@ class OrderCreateView(LoginRequiredMixin, CreateView):
         line_items = [
             {
                 'price_data': {
-                    'currency': 'usd',
+                    'currency': 'BDT',
                     'product_data': {
                         'name': item['product'].name,
                     },
@@ -118,6 +120,18 @@ class OrderCreateView(LoginRequiredMixin, CreateView):
                 'quantity': item['quantity'],
             } for item in cart
         ]
+
+        # Add shipping cost as a separate line item
+        line_items.append({
+            'price_data': {
+                'currency': 'BDT',
+                'product_data': {
+                    'name': 'Shipping Cost',
+                },
+                'unit_amount': int(self.shipping_cost * 100),
+            },
+            'quantity': 1,
+        })
 
         checkout_session = stripe.checkout.Session.create(
             payment_method_types=['card'],
