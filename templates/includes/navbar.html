@@ -3,7 +3,7 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top shadow-sm">
     <div class="container">
         <!-- Brand Logo -->
-        <a class="navbar-brand" href="{% url 'product_list' %}">
+        <a class="navbar-brand" href="{% url 'home' %}">
             <img src="{% static 'images/logo.png' %}" alt="SportsHub" height="40">
             SportsHub
         </a>
@@ -18,12 +18,12 @@
             <!-- Main Navigation Links -->
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'product_list' %}">All Products</a>
+                    <a class="nav-link" href="{% url 'product_list' %}"><i class="fa-solid fa-volleyball"></i> Products</a>
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="categoriesDropdown" role="button"
                        data-bs-toggle="dropdown">
-                        Shop Categories
+                        <i class="fa-solid fa-bars-staggered"></i> Categories
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="categoriesDropdown">
                         {% for category in categories %}
@@ -41,11 +41,16 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'game_home' %}">
-                        <i class="fas fa-trophy"></i> Game Dashboard
+                        <i class="fas fa-trophy"></i> Game Zone
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">About Us</a>
+                    <a class="nav-link" href="{% url 'custom_jersey_create' 1 %}">
+                        <i class="fa-solid fa-shirt"></i> Custom Jersey Order
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#"><i class="fa-solid fa-address-book"></i> About Us</a>
                 </li>
             </ul>
 
@@ -142,12 +147,23 @@
                     </ul>
                 </li>
                 {% else %}
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'login' %}">
-                        <i class="fas fa-sign-in-alt"></i>
-                        <span class="d-lg-none ms-2">Login</span>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="accounts" role="button"
+                       data-bs-toggle="dropdown">
+                        <i class="fas fa-user-circle"></i>
+                        <span class="d-lg-none ms-2">Login/Register</span>
                     </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                        <li>
+                            <a class="dropdown-item" href="{% url 'login' %}"><i class="fa-regular fa-user"></i> Sign In</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'register' %}"><i class="fa-solid fa-user-plus"></i>
+                                Sign Up</a>
+                        </li>
+                    </ul>
                 </li>
+
                 {% endif %}
             </ul>
         </div>

@@ -16,7 +16,7 @@ urlpatterns = [
     path('users/<int:pk>/delete/', UserDeleteView.as_view(), name='users_delete'),
 
     path('password-change/', auth_views.PasswordChangeView.as_view(
-        template_name='users/change_password.html',
+        template_name='users/password_change.html',
         success_url=reverse_lazy('profile')
     ), name='password_change'),
     path('profile/edit/', views.update_profile, name='update_profile'),
