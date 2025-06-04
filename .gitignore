@@ -182,3 +182,6 @@ static/mptt
 media/profile_pics
 media/products
 media/custom_jerseys
+media/categories
+media/banners
+media/site

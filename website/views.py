@@ -1,6 +1,9 @@
-from django.shortcuts import render
-from .models import SiteConfiguration, Banner
-from products.models import Product
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.conf import settings
+from django.core.mail import BadHeaderError, send_mail
+from .models import SiteConfiguration, Banner, ContactUs
+from products.models import Product, Category
 
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
@@ -11,11 +14,12 @@ def home_page(request):
     site_config = SiteConfiguration.objects.first()  # Assuming single config instance
     banners = Banner.objects.filter(is_active=True).order_by('-created_at')[:5]
     products = Product.objects.filter(is_active=True).order_by('-created_at')[:8]  # latest 8 products
-
+    categories = Category.objects.filter(is_active=True)[:3]
     context = {
         'site_config': site_config,
         'banners': banners,
         'products': products,
+        'categories': categories,
     }
     return render(request, 'home.html', context)
 
@@ -79,3 +83,31 @@ class BannerDetailView(DetailView):
     template_name = 'banner/detail.html'
     context_object_name = 'banner'
 
+
+def contact(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        subject = request.POST.get('subject')
+        message = request.POST.get('message')
+        if name and email and subject and message:
+            ContactUs(name=name, email=email,
+                      subject=subject, message=message).save()
+            try:
+                from_email = settings.DEFAULT_FROM_EMAIL
+                send_mail(subject, message, from_email, [
+                          email],  fail_silently=False,)
+                messages.success(request, f"Hello {name},\nThanks for contact with us!")
+                return redirect('home')
+            except BadHeaderError as error:
+                messages.error(request, f"{error}")
+                return redirect('home')
+        else:
+            messages.error(request, f"Mail Subject or message body or your email error")
+            return redirect('home')
+    else:
+        context = {}
+        site_config_obj = SiteConfiguration.objects.first()
+        if site_config_obj:
+            context['site_config'] = site_config_obj
+        return render(request, 'website/contact.html', context)

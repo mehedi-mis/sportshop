@@ -5,7 +5,7 @@
         <!-- Brand Logo -->
         <a class="navbar-brand" href="{% url 'home' %}">
             <img src="{% static 'images/logo.png' %}" alt="SportsHub" height="40">
-            SportsHub
+            {% if site_config %} {{ site_config.site_name }} {% else %}Demo Site{% endif %}
         </a>
 
         <!-- Mobile Toggle Button -->
@@ -50,7 +50,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#"><i class="fa-solid fa-address-book"></i> About Us</a>
+                    <a class="nav-link" href="{% url 'contact' %}"><i class="fa-solid fa-address-book"></i> About Us</a>
                 </li>
             </ul>
 

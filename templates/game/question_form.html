@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container mt-5" style="max-width: 600px;">
+    <h2 class="mb-4">
+        {% if view.object %}
+            Edit Game Questions
+        {% else %}
+            Create Game Questions
+        {% endif %}
+    </h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit" class="btn btn-success">Save</button>
+        <a href="{% url 'banner_list' %}" class="btn btn-secondary ms-2">Cancel</a>
+    </form>
+</div>
+{% endblock %}

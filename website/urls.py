@@ -1,7 +1,8 @@
 from django.urls import path
 from website.views import (
 home_page, SiteConfigListView, SiteConfigCreateView, SiteConfigUpdateView, SiteConfigDeleteView,
-BannerListView, BannerCreateView, BannerUpdateView, BannerDeleteView, BannerDetailView
+BannerListView, BannerCreateView, BannerUpdateView, BannerDeleteView, BannerDetailView,
+contact
 )
 
 
@@ -20,4 +21,7 @@ urlpatterns = [
     path('banners/<int:pk>/edit/', BannerUpdateView.as_view(), name='banner_edit'),
     path('banners/<int:pk>/delete/', BannerDeleteView.as_view(), name='banner_delete'),
     path('banners/<int:pk>/', BannerDetailView.as_view(), name='banner_detail'),
+
+
+    path('contact/', contact, name='contact'),
 ]

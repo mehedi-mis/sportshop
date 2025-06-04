@@ -5,10 +5,25 @@ from django.http import JsonResponse
 from django.contrib import messages
 from django.db import transaction
 from .models import TriviaQuestion, UserScore, LeaderboardPrize, UserDiscount
+from .forms import TriviaQuestionForm
 from products.models import Product
 import random
 import uuid
 from datetime import timedelta
+
+
+@login_required
+def create_game_question(request):
+    if request.method == 'POST':
+        form = TriviaQuestionForm(request.POST)
+        if form.is_valid():
+            trivia = form.save(commit=False)
+            trivia.created_by = request.user  # automatically assign creator
+            trivia.save()
+            return redirect('game_home')  # change this to your list/detail view name
+    else:
+        form = TriviaQuestionForm()
+    return render(request, 'game/question_form.html', {'form': form})
 
 
 @login_required
@@ -51,7 +66,7 @@ def play_game(request):
         last_played__date=today
     ).count()
 
-    if questions_today >= 20:  # Limit to 20 questions per day
+    if questions_today >= 1:  # Limit to 1 questions per day
         messages.info(request, "You've reached your daily play limit. Come back tomorrow!")
         return redirect('game_home')
 
@@ -85,7 +100,6 @@ def play_game(request):
 
     # Select random question
     # question = random.choice(available_questions)
-
 
     # Update recent questions in session (keep only last 5)
     recent_question_ids.append(question.id)
@@ -127,10 +141,10 @@ def submit_answer(request):
             if is_correct:
                 # Award points based on difficulty
                 points = {
-                    'E': 10,
-                    'M': 20,
-                    'H': 30
-                }.get(question.difficulty, 10)
+                    'E': 2,
+                    'M': 4,
+                    'H': 6
+                }.get(question.difficulty, 2)
 
                 user_score.score += points
                 user_score.correct_answers += 1

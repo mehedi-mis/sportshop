@@ -5,12 +5,6 @@
 {% block content %}
 <div class="container mt-4">
 
-  <!-- Site Header -->
-  <header class="d-flex align-items-center mb-4">
-    <img src="{{ site_config.site_logo.url }}" alt="{{ site_config.site_name }}" height="60" class="me-3">
-    <h1>{{ site_config.site_name }}</h1>
-  </header>
-
   <!-- Banner Carousel -->
   {% if banners %}
   <div id="bannerCarousel" class="carousel slide mb-5" data-bs-ride="carousel">
@@ -41,8 +35,29 @@
   </div>
   {% endif %}
 
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Product Categories</h1>
+        <p><a href="{% url 'category_list' %}">See All Categories</a> </p>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for category in categories %}
+            {% include 'products/includes/_category_card.html' %}
+        {% empty %}
+            <div class="col-12">
+                <div class="alert alert-info">No categories found.</div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
   <!-- Featured Products -->
-  <h2 class="mb-4">Featured Products</h2>
+  <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-4">Featured Products</h2>
+        <p><a href="{% url 'product_list' %}">See All Products</a> </p>
+    </div>
+
   <div class="row row-cols-1 row-cols-md-4 g-4">
     {% for product in products %}
     <div class="col">

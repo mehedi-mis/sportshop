@@ -1,7 +1,7 @@
 from datetime import datetime
+from django.utils import timezone
 from decimal import Decimal
 import stripe
-
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy
@@ -13,7 +13,8 @@ from django.conf import settings
 from .models import Order, OrderItem
 from .forms import OrderForm, OrderStatusForm
 from cart.utils import SessionCart
-
+from website.models import SiteConfiguration
+from leaderboard.models import UserDiscount
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -63,7 +64,10 @@ class OrderCreateView(LoginRequiredMixin, CreateView):
     form_class = OrderForm
     template_name = 'orders/order_create.html'
     success_url = reverse_lazy('order_list')
-    shipping_cost = Decimal('100.00')
+
+    site_config_obj = SiteConfiguration.objects.first()
+    shipping_cost = site_config_obj.shipping_cost if site_config_obj else 0.0
+    tax_cost = site_config_obj.tax_percentage if site_config_obj else 0.0
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -71,11 +75,18 @@ class OrderCreateView(LoginRequiredMixin, CreateView):
         context['cart'] = cart
         context['cart_items'] = list(cart.__iter__())
         context['stripe_public_key'] = settings.STRIPE_PUBLIC_KEY
-        context['stripe_amount'] = int(cart.get_total_price() * 100)
+        context['stripe_amount'] = int(cart.get_total_price() + self.shipping_cost)
         context['shipping_cost'] = self.shipping_cost
         return context
 
     def form_valid(self, form):
+        now = timezone.now()
+        has_discount = UserDiscount.objects.filter(
+            user=self.request.user,
+            expires_at__gte=now,
+            is_used=False
+        )
+
         cart = SessionCart(self.request)
         if len(cart) == 0:
             messages.error(self.request, "Your cart is empty")
@@ -83,7 +94,12 @@ class OrderCreateView(LoginRequiredMixin, CreateView):
 
         order = form.save(commit=False)
         order.user = self.request.user
-        order.order_total = cart.get_total_price()
+        if has_discount.exists() and has_discount.first().discount_code == form.cleaned_data.get('coupon_code'):
+            order.order_total = cart.get_total_price() - has_discount.first().discount_percentage
+        else:
+            order.order_total = cart.get_total_price()
+        order.shipping_cost = self.shipping_cost
+        order.tax = self.tax_cost
         order.save()
 
         # Create order items

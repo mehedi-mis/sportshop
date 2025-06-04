@@ -31,3 +31,16 @@ class Banner(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class ContactUs(models.Model):
+    name = models.CharField(max_length=40, blank=False)
+    email = models.EmailField(max_length=50)
+    subject = models.EmailField(max_length=50, blank=False)
+    message = models.TextField()
+
+    def __str__(self) -> str:
+        return self.name
+
+    class Meta:
+        verbose_name_plural = "Contact Us"

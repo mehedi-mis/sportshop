@@ -44,6 +44,12 @@
                         <i class="fas fa-cart-flatbed me-2"></i>Custom Order History
                     </a>
                     {% if user.is_staff %}
+                    <a href="{% url 'site_config_list' %}" class="list-group-item list-group-item-action">
+                        <i class="fa-solid fa-screwdriver-wrench"></i> Site Config
+                    </a>
+                    <a href="{% url 'banner_list' %}" class="list-group-item list-group-item-action">
+                        <i class="fa-solid fa-images"></i> Banner List
+                    </a>
                     <a href="{% url 'users_list' %}" class="list-group-item list-group-item-action">
                         <i class="fas fa-users me-2"></i>User List
                     </a>
@@ -53,11 +59,8 @@
                     <a href="{% url 'product_create' %}" class="list-group-item list-group-item-action">
                         <i class="fas fa-file-circle-plus me-2"></i>Add Product
                     </a>
-                    <a href="{% url 'site_config_list' %}" class="list-group-item list-group-item-action">
-                        <i class="fa-solid fa-screwdriver-wrench"></i> Site Config List
-                    </a>
-                    <a href="{% url 'banner_list' %}" class="list-group-item list-group-item-action">
-                        <i class="fa-solid fa-images"></i> Banner List
+                    <a href="{% url 'create_game_question' %}" class="list-group-item list-group-item-action">
+                        <i class="fa-solid fa-puzzle-piece"></i> Add Game Question
                     </a>
                     {% endif %}
 
@@ -77,6 +80,11 @@
         <div class="col-md-9">
             <!-- Profile Update Form -->
             <div class="card">
+                <div class="card-header">
+                    {% if coupon %}
+                        <span class="text-warning bg-success p-2">You got Discount Code({{ coupon.discount_percentage }}%): {{ coupon.discount_code }}</span>
+                    {% endif %}
+                </div>
                 <div class="card-header">
                     <h4>Edit Profile Information</h4>
                 </div>

@@ -11,8 +11,9 @@ from django.contrib.sites.shortcuts import get_current_site
 from .models import CustomUser
 from .forms import UserRegistrationForm, UserLoginForm, UserProfileForm, CustomUserUpdateForm, CustomUserUpdateForm2
 from .tokens import account_activation_token
+from leaderboard.models import UserDiscount
 
-
+from django.utils import timezone
 from django.views.generic import ListView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy
@@ -176,8 +177,14 @@ def logout_view(request):
 @login_required
 def profile_view(request):
     """Profile View with update functionality"""
+    now = timezone.now()
     user = request.user
     profile_updated = False
+    user_discount = UserDiscount.objects.filter(
+        user=request.user,
+        expires_at__gte=now,
+        is_used=False
+    )
 
     if request.method == 'POST':
         # Initialize form with current user data and POST data
@@ -206,7 +213,8 @@ def profile_view(request):
     context = {
         'form': form,
         'profile_updated': profile_updated,
-        'user': user
+        'user': user,
+        'coupon': user_discount.first()
     }
     return render(request, 'users/profile.html', context)
 
