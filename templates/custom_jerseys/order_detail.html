@@ -31,7 +31,7 @@
                             {{ order.get_status_display }}
                         </span>
                     </p>
-                    <p><strong>Price:</strong> ${{ order.price }}</p>
+                    <p><strong>Price:</strong> ৳{{ order.price }}</p>
                     <p><strong>Order Date:</strong> {{ order.created_at|date:"M d, Y" }}</p>
                     <p><strong>Last Updated:</strong> {{ order.updated_at|date:"M d, Y" }}</p>
                 </div>

@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h3><i class="fas fa-check-circle me-2"></i>Payment Successful</h3>
+                </div>
+                <div class="card-body">
+                    <h4 class="mb-4">Thank you for your order!</h4>
+                    <p>Your payment has been processed successfully.</p>
+                    <p>Order Number: <strong>{{ order.order_number }}</strong></p>
+                    <p>Total Paid: <strong>৳{{ order.get_total_with_shipping }}</strong></p>
+
+                    <div class="mt-4">
+                        <a href="{% url 'order_detail' order.pk %}" class="btn btn-primary me-2">
+                            View Order Details
+                        </a>
+                        <a href="{% url 'product_list' %}" class="btn btn-outline-secondary">
+                            Continue Shopping
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

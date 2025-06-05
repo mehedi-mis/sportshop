@@ -4,6 +4,7 @@ from django.db import models
 class SiteConfiguration(models.Model):
     site_name = models.CharField(max_length=100, default='Sports Shop')
     site_logo = models.ImageField(upload_to='site/')
+    offer_message = models.CharField(max_length=300,  default='Welcome to SportsHub!', null=True, blank=True)
     contact_email = models.EmailField(default='contact@sportsshop.com')
     contact_phone = models.CharField(max_length=20)
     address = models.TextField()
@@ -31,3 +32,16 @@ class Banner(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class ContactUs(models.Model):
+    name = models.CharField(max_length=40, blank=False)
+    email = models.EmailField(max_length=50)
+    subject = models.EmailField(max_length=50, blank=False)
+    message = models.TextField()
+
+    def __str__(self) -> str:
+        return self.name
+
+    class Meta:
+        verbose_name_plural = "Contact Us"

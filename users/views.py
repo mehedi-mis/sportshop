@@ -9,10 +9,76 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.contrib.sites.shortcuts import get_current_site
 from .models import CustomUser
-from .forms import UserRegistrationForm, UserLoginForm, UserProfileForm
+from .forms import UserRegistrationForm, UserLoginForm, UserProfileForm, CustomUserUpdateForm, CustomUserUpdateForm2
 from .tokens import account_activation_token
-import random
-import string
+from leaderboard.models import UserDiscount
+
+from django.utils import timezone
+from django.views.generic import ListView, UpdateView, DeleteView
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.urls import reverse_lazy
+from django.db import models
+
+
+class UserListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
+    model = CustomUser
+    template_name = 'users/list.html'
+    context_object_name = 'users'
+    paginate_by = 20
+
+    def test_func(self):
+        return self.request.user.is_staff
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        search = self.request.GET.get('search')
+        if search:
+            queryset = queryset.filter(
+                models.Q(username__icontains=search) |
+                models.Q(email__icontains=search) |
+                models.Q(first_name__icontains=search) |
+                models.Q(last_name__icontains=search)
+            )
+        return queryset.order_by('-date_joined')
+
+
+class UserUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = CustomUser
+    form_class = CustomUserUpdateForm
+    template_name = 'users/update.html'
+    context_object_name = 'user'
+
+    def test_func(self):
+        return self.request.user.is_staff
+
+    def get_success_url(self):
+        messages.success(self.request, f"User {self.object.email} updated successfully!")
+
+        # Check for 'next' parameter in the URL (e.g., ?next=admin_dashboard)
+        next_url = self.request.GET.get('next')
+
+        if next_url:
+            return next_url  # Redirect to the URL passed in 'next' (e.g., admin_dashboard)
+        else:
+            return reverse_lazy('users_list')  # Default fallback
+
+
+class UserDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = CustomUser
+    template_name = 'users/delete.html'
+    success_url = reverse_lazy('users_list')
+    context_object_name = 'user'
+
+    def test_func(self):
+        return self.request.user.is_staff
+
+    def delete(self, request, *args, **kwargs):
+        user = self.get_object()
+        if user == request.user:
+            messages.error(request, "You cannot delete your own account!")
+            return redirect('users_list')
+        messages.success(request, f"User {user.email} deleted successfully!")
+        return super().delete(request, *args, **kwargs)
 
 
 def register_view(request):
@@ -111,8 +177,14 @@ def logout_view(request):
 @login_required
 def profile_view(request):
     """Profile View with update functionality"""
+    now = timezone.now()
     user = request.user
     profile_updated = False
+    user_discount = UserDiscount.objects.filter(
+        user=request.user,
+        expires_at__gte=now,
+        is_used=False
+    )
 
     if request.method == 'POST':
         # Initialize form with current user data and POST data
@@ -141,6 +213,20 @@ def profile_view(request):
     context = {
         'form': form,
         'profile_updated': profile_updated,
-        'user': user
+        'user': user,
+        'coupon': user_discount.first()
     }
     return render(request, 'users/profile.html', context)
+
+
+@login_required
+def update_profile(request):
+    if request.method == 'POST':
+        form = CustomUserUpdateForm2(request.POST, request.FILES, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('profile')  # redirect to profile page
+    else:
+        form = CustomUserUpdateForm2(instance=request.user)
+
+    return render(request, 'accounts/update_profile.html', {'form': form})

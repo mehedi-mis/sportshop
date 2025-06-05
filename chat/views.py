@@ -1,10 +1,11 @@
 from django.views.generic import ListView, DetailView, CreateView
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib import messages
 from .models import ChatRoom, Message
-from .forms import MessageForm,ChatRoomForm
+from users.models import CustomUser
+from .forms import MessageForm, ChatRoomForm
 
 
 class ChatRoomListView(LoginRequiredMixin, ListView):
@@ -18,17 +19,19 @@ class ChatRoomListView(LoginRequiredMixin, ListView):
         return ChatRoom.objects.filter(user=self.request.user)
 
 
-class ChatRoomCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+class ChatRoomCreateView(LoginRequiredMixin, CreateView):
     model = ChatRoom
     form_class = ChatRoomForm
     template_name = 'chat/room_create.html'
     success_url = reverse_lazy('chat_room_list')
 
-    def test_func(self):
-        return self.request.user.is_staff
-
     def form_valid(self, form):
-        form.instance.admin = self.request.user
+        is_existing_room = ChatRoom.objects.filter(user=self.request.user).exists()
+        if is_existing_room:
+            messages.success(self.request, f"Chat room already created with {form.instance.admin.email}")
+            return redirect('chat_room_list')
+
+        form.instance.user = self.request.user
         response = super().form_valid(form)
         messages.success(self.request, f"Chat room created with {form.instance.user.email}")
         return response
@@ -42,7 +45,7 @@ class ChatRoomDetailView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['form'] = MessageForm()
-        context['messages'] = self.object.messages.all().order_by('created_at')
+        context['chat_messages'] = self.object.messages.all().order_by('created_at')
         return context
 
     def get_queryset(self):

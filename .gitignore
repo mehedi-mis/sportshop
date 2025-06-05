@@ -3,6 +3,8 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+.vscode/
+
 # C extensions
 *.so
 
@@ -181,3 +183,8 @@ static/mptt
 
 media/profile_pics
 media/products
+media/custom_jerseys
+media/categories
+media/banners
+media/site
+media/chat_images

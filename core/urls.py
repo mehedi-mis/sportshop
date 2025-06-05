@@ -5,6 +5,7 @@ from django.conf.urls.static import static
 
 
 urlpatterns = [
+    path('dashboard/', include('admin_dashboard.urls')),
     path('admin/', admin.site.urls),
     path('accounts/', include('allauth.urls')),
     path('users/', include('users.urls')),
@@ -12,7 +13,11 @@ urlpatterns = [
     path('cart/', include('cart.urls')),
     path('jersey/', include('custom_jerseys.urls')),
     path('chat/', include('chat.urls')),
-    path('', include('products.urls')),
+    path('notifications/', include('notifications.urls')),
+    path('wishlist/', include('wishlist.urls')),
+    path('leaderboard/', include('leaderboard.urls')),
+    path('products/', include('products.urls')),
+    path('', include('website.urls')),
 ]
 
 if settings.DEBUG:

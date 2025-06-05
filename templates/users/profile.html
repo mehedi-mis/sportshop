@@ -3,9 +3,9 @@
 {% load static %}
 
 {% block content %}
-<div class="container my-5">
+<div class="container-fluid my-5">
     <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-3">
             <!-- Profile Card -->
             <div class="card mb-4">
                 <div class="card-body text-center">
@@ -34,42 +34,57 @@
                     <h5>Account Settings</h5>
                 </div>
                 <div class="list-group list-group-flush">
-                    <a href="{% url 'profile' %}" class="list-group-item list-group-item-action active">
-                        <i class="fas fa-user me-2"></i>Profile Information
+                    <a href="{% url 'update_profile' %}" class="list-group-item list-group-item-action active">
+                        <i class="fas fa-user me-2"></i>Update Profile
                     </a>
                     <a href="{% url 'order_list' %}" class="list-group-item list-group-item-action">
                         <i class="fas fa-shopping-bag me-2"></i>Order History
                     </a>
+                    <a href="{% url 'custom_jersey_list' %}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-cart-flatbed me-2"></i>Custom Order History
+                    </a>
                     {% if user.is_staff %}
-                    <a href="{% url 'product_create' %}" class="list-group-item list-group-item-action">
+                    <a href="{% url 'site_config_list' %}" class="list-group-item list-group-item-action">
+                        <i class="fa-solid fa-screwdriver-wrench"></i> Site Config
+                    </a>
+                    <a href="{% url 'banner_list' %}" class="list-group-item list-group-item-action">
+                        <i class="fa-solid fa-images"></i> Banner List
+                    </a>
+                    <a href="{% url 'users_list' %}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-users me-2"></i>User List
+                    </a>
+                    <a href="{% url 'category_create' %}" class="list-group-item list-group-item-action">
                         <i class="fas fa-folder-plus me-2"></i>Add Categories
                     </a>
                     <a href="{% url 'product_create' %}" class="list-group-item list-group-item-action">
                         <i class="fas fa-file-circle-plus me-2"></i>Add Product
                     </a>
+                    <a href="{% url 'create_game_question' %}" class="list-group-item list-group-item-action">
+                        <i class="fa-solid fa-puzzle-piece"></i> Add Game Question
+                    </a>
+                    {% endif %}
 
                     <a href="{% url 'room_create' %}" class="list-group-item list-group-item-action">
                         <i class="fas fa-comment-medical me-2"></i>Create Chat
                     </a>
-                    {% endif %}
+                    <a href="{% url 'password_change' %}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-key me-2"></i> Change Password
+                    </a>
                     <a href="{% url 'logout' %}" class="list-group-item list-group-item-action">
                         <i class="fas fa-sign-out me-2"></i>Logout
                     </a>
-                    {% comment %}
-                    <a href="{% url 'wishlist' %}" class="list-group-item list-group-item-action">
-                        <i class="fas fa-heart me-2"></i>Wishlist
-                    </a>
-                    <a href="{% url 'password_change' %}" class="list-group-item list-group-item-action">
-                        <i class="fas fa-lock me-2"></i>Change Password
-                    </a>
-                    {% endcomment %}
                 </div>
             </div>
         </div>
 
-        <div class="col-md-8">
+        <div class="col-md-9">
             <!-- Profile Update Form -->
             <div class="card">
+                <div class="card-header">
+                    {% if coupon %}
+                        <span class="text-warning bg-success p-2">You got Discount Code({{ coupon.discount_percentage }}%): {{ coupon.discount_code }}</span>
+                    {% endif %}
+                </div>
                 <div class="card-header">
                     <h4>Edit Profile Information</h4>
                 </div>

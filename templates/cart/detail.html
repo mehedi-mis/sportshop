@@ -37,8 +37,8 @@
                             </button>
                         </form>
                     </td>
-                    <td>${{ item.price }}</td>
-                    <td>${{ item.total_price }}</td>
+                    <td>৳{{ item.price }}</td>
+                    <td>৳{{ item.total_price }}</td>
                     <td>
                         <form action="{% url 'cart_remove' product.id %}" method="post">
                             {% csrf_token %}
@@ -52,7 +52,7 @@
                 {% endfor %}
                 <tr class="table-secondary">
                     <td colspan="3"><strong>Total</strong></td>
-                    <td colspan="2"><strong>${{ cart.get_total_price }}</strong></td>
+                    <td colspan="2"><strong>৳{{ cart.get_total_price }}</strong></td>
                 </tr>
             </tbody>
         </table>

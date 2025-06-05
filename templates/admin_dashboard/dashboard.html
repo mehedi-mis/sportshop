@@ -1,0 +1,322 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block content %}
+<div class="dashboard-container">
+    <h1>Admin Dashboard</h1>
+    
+    <!-- Summary Cards -->
+    <div class="row summary-cards">
+        <!-- Users Card -->
+        <div class="col-md-4">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-header">Users</div>
+                <div class="card-body">
+                    <h2 class="card-title">{{ total_users|intcomma }}</h2>
+                    <p class="card-text">
+                        <span class="badge bg-light text-dark">Today: {{ new_users_today }}</span>
+                        <span class="badge bg-light text-dark">This Week: {{ new_users_week }}</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Orders Card -->
+        <div class="col-md-4">
+            <div class="card text-white bg-success mb-3">
+                <div class="card-header">Orders</div>
+                <div class="card-body">
+                    <h2 class="card-title">{{ total_orders|intcomma }}</h2>
+                    <p class="card-text">
+                        <span class="badge bg-light text-dark">Today: {{ today_orders }}</span>
+                        <span class="badge bg-light text-dark">This Week: {{ weekly_orders }}</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sales Card -->
+        <div class="col-md-4">
+            <div class="card text-white bg-info mb-3">
+                <div class="card-header">Sales</div>
+                <div class="card-body">
+                    <h2 class="card-title">৳{{ total_sales|intcomma }}</h2>
+                    <p class="card-text">
+                        <span class="badge bg-light text-dark">Today: ৳{{ today_sales|intcomma }}</span>
+                        <span class="badge bg-light text-dark">This Week: ৳{{ weekly_sales|intcomma }}</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Second Row Cards -->
+    <div class="row mt-1">
+        <!-- Custom Jerseys -->
+        <div class="col-md-4">
+            <div class="card mb-3">
+                <div class="card-header bg-warning text-dark">Custom Jerseys</div>
+                <div class="card-body">
+                    <h3 class="card-title">{{ custom_orders|intcomma }}</h3>
+                    <p class="card-text">
+                        <span class="badge bg-danger">Pending: {{ pending_custom_orders }}</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Inventory Status -->
+        <div class="col-md-4">
+            <div class="card mb-3">
+                <div class="card-header bg-dark text-white">Inventory Status</div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h3 class="text-danger">{{ out_of_stock_products }}</h3>
+                            <p class="small">Out of Stock</p>
+                        </div>
+                        <div>
+                            <h3 class="text-warning">{{ low_stock_products }}</h3>
+                            <p class="small">Low Stock</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Customer Support -->
+        <div class="col-md-4">
+            <div class="card mb-3">
+                <div class="card-header bg-secondary text-white">Customer Support</div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h3>{{ active_chats }}</h3>
+                            <p class="small">Active Chats</p>
+                        </div>
+                        <div>
+                            <h3 class="text-danger">{{ unread_messages }}</h3>
+                            <p class="small">Unread Messages</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <!-- User Row Cards -->
+    <div class="row mt-1">
+        <div class="card mt-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-users me-2"></i>User Management
+                    <span class="badge bg-light text-dark float-end">{{ users_page.paginator.count }} users</span>
+                </h5>
+            </div>
+            <div class="card-body">
+                <!-- Search Form -->
+                <form method="get" class="mb-4">
+                    <div class="input-group">
+                        <input type="text" name="search" class="form-control"
+                               placeholder="Search users..." value="{{ search_query }}">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-search"></i>
+                        </button>
+                        <a href="?page=1" class="btn btn-secondary">Reset</a>
+                    </div>
+                </form>
+
+                <!-- User Table -->
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Profile</th>
+                                <th>Email</th>
+                                <th>Name</th>
+                                <th>Joined</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in users_page %}
+                            <tr>
+                                <td>{{ user.id }}</td>
+                                <td>
+                                    {% if user.profile_picture %}
+                                    <img src="{{ user.profile_picture.url }}"
+                                         class="rounded-circle"
+                                         width="40"
+                                         height="40"
+                                         alt="{{ user.username }}">
+                                    {% else %}
+                                    <div class="bg-secondary rounded-circle d-flex align-items-center justify-content-center"
+                                         style="width: 40px; height: 40px;">
+                                        <i class="fas fa-user text-white"></i>
+                                    </div>
+                                    {% endif %}
+                                </td>
+                                <td>{{ user.email }}</td>
+                                <td>
+                                    {{ user.get_full_name|default:"-" }}
+                                    {% if user.is_staff %}
+                                    <span class="badge bg-info">Staff</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ user.date_joined|date:"M d, Y" }}</td>
+                                <td>
+                                    {% if user.is_active %}
+                                    <span class="badge bg-success">Active</span>
+                                    {% else %}
+                                    <span class="badge bg-danger">Inactive</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{% url 'users_update' user.id %}?next={% url 'admin_dashboard' %}"
+                                       class="btn btn-sm btn-outline-primary"
+                                       title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="{% url 'users_delete' user.id %}?next={% url 'admin_dashboard' %}"
+                                       class="btn btn-sm btn-outline-danger"
+                                       title="Delete">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="7" class="text-center">No users found</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                {% if users_page.paginator.num_pages > 1 %}
+                <nav aria-label="User pagination">
+                    <ul class="pagination justify-content-center">
+                        {% if users_page.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1&search={{ search_query }}">First</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ users_page.previous_page_number }}&search={{ search_query }}">Previous</a>
+                        </li>
+                        {% endif %}
+
+                        {% for num in users_page.paginator.page_range %}
+                        {% if users_page.number == num %}
+                        <li class="page-item active">
+                            <a class="page-link" href="?page={{ num }}&search={{ search_query }}">{{ num }}</a>
+                        </li>
+                        {% elif num > users_page.number|add:'-3' and num < users_page.number|add:'3' %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ num }}&search={{ search_query }}">{{ num }}</a>
+                        </li>
+                        {% endif %}
+                        {% endfor %}
+
+                        {% if users_page.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ users_page.next_page_number }}&search={{ search_query }}">Next</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ users_page.paginator.num_pages }}&search={{ search_query }}">Last</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="row mt-4">
+        <!-- Recent Orders -->
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Recent Orders</h3>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Order #</th>
+                                    <th>Customer</th>
+                                    <th>Date</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for order in recent_orders %}
+                                <tr>
+                                    <td><a href="{% url 'order_detail' order.id %}">{{ order.order_number }}</a></td>
+                                    <td>{{ order.user.get_full_name|default:order.user.email }}</td>
+                                    <td>{{ order.created_at|date:"M d, Y" }}</td>
+                                    <td>৳{{ order.order_total }}</td>
+                                    <td>
+                                        <span class="badge bg-{% if order.status == 'P' %}warning{% elif order.status == 'PR' %}info{% elif order.status == 'S' %}primary{% elif order.status == 'D' %}success{% else %}danger{% endif %}">
+                                            {{ order.get_status_display }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Recent Custom Orders -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Recent Custom Orders</h3>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group">
+                        {% for order in recent_custom_orders %}
+                        <a href="{% url 'custom_jersey_detail' order.id %}" class="list-group-item">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <strong>#{{ order.order_number }}</strong>
+                                    <div class="small">{{ order.user.get_full_name|default:order.user.email }}</div>
+                                </div>
+                                <span class="badge bg-{% if order.status == 'P' %}warning{% elif order.status == 'A' %}info{% elif order.status == 'D' %}primary{% elif order.status == 'PR' %}secondary{% elif order.status == 'S' %}success{% elif order.status == 'C' %}success{% else %}danger{% endif %}">
+                                    {{ order.get_status_display }}
+                                </span>
+                            </div>
+                        </a>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.dashboard-container {
+    padding: 20px;
+}
+.summary-cards .card {
+    height: 100%;
+}
+.summary-cards .card-body {
+    padding: 1.5rem;
+}
+.summary-cards .card-title {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+</style>
+{% endblock %}

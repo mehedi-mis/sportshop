@@ -18,6 +18,7 @@
                     <th>Order #</th>
                     <th>Date</th>
                     <th>Status</th>
+                    <th>Shipping Cost</th>
                     <th>Total</th>
                     <th>Payment</th>
                     <th>Actions</th>
@@ -33,7 +34,8 @@
                             {{ order.get_status_display }}
                         </span>
                     </td>
-                    <td>${{ order.order_total }}</td>
+                    <td>৳{{ order.shipping_cost }}</td>
+                    <td>৳{{ order.order_total }}</td>
                     <td>{{ order.get_payment_method_display }}</td>
                     <td>
                         <a href="{% url 'order_detail' order.pk %}" class="btn btn-sm btn-outline-primary">

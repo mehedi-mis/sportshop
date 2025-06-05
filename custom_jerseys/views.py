@@ -51,6 +51,7 @@ class CustomJerseyOrderCreateView(LoginRequiredMixin, CreateView):
         order.chat_room = chat_room
         order.user = self.request.user
         order.order_number = self.generate_order_number()
+        order.price = 500
         order.save()
 
         # Create a message in the chat room

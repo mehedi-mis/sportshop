@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <div class="card">
+                <div class="card-header bg-warning">
+                    <h3><i class="fas fa-exclamation-circle me-2"></i>Payment Cancelled</h3>
+                </div>
+                <div class="card-body">
+                    <h4 class="mb-4">Your payment was cancelled</h4>
+                    <p>You can safely continue shopping or try again.</p>
+
+                    <div class="mt-4">
+                        <a href="{% url 'cart_detail' %}" class="btn btn-primary me-2">
+                            Back to Cart
+                        </a>
+                        <a href="{% url 'product_list' %}" class="btn btn-outline-secondary">
+                            Continue Shopping
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

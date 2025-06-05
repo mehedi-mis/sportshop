@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">{{ banner.title }}</h4>
+        </div>
+        <div class="card-body">
+            <div class="text-center mb-3">
+                <img src="{{ banner.image.url }}" alt="{{ banner.title }}" class="img-fluid rounded" style="max-height: 300px;">
+            </div>
+            <p><strong>Link:</strong>
+                {% if banner.link %}
+                    <a href="{{ banner.link }}" target="_blank">{{ banner.link }}</a>
+                {% else %}
+                    <span class="text-muted">No link provided</span>
+                {% endif %}
+            </p>
+            <p>
+                <strong>Status:</strong>
+                {% if banner.is_active %}
+                    <span class="badge bg-success">Active</span>
+                {% else %}
+                    <span class="badge bg-secondary">Inactive</span>
+                {% endif %}
+            </p>
+            <a href="{% url 'banner_edit' banner.pk %}" class="btn btn-warning">Edit</a>
+            <a href="{% url 'banner_delete' banner.pk %}" class="btn btn-danger">Delete</a>
+            <a href="{% url 'banner_list' %}" class="btn btn-secondary">Back to List</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
