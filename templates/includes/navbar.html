@@ -132,11 +132,13 @@
                         <li>
                             <a class="dropdown-item" href="{% url 'profile' %}">My Profile</a>
                         </li>
+                        {% if user.is_staff %}
                         <li>
                             <a href="{% url 'admin_dashboard' %}" class="dropdown-item">
                                 <i class="fas fa-tachometer-alt"></i> Dashboard
                             </a>
                         </li>
+                        {% endif %}
                         <li>
                             <a class="dropdown-item" href="{% url 'chat_room_list' %}">Chat List</a>
                         </li>
