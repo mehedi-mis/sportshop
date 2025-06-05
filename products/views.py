@@ -50,7 +50,7 @@ class ProductListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['categories'] = Category.objects.filter(is_active=True, parent__isnull=True)
+        context['categories'] = Category.objects.filter(is_active=True)
         context['current_category'] = self.kwargs.get('category_slug')
         return context
 
@@ -76,7 +76,7 @@ class ProductDetailView(DetailView):
             {'name': product.category.name, 'url': product.category.get_absolute_url()},
             {'name': product.name, 'url': product.get_absolute_url()}
         ]
-        context['categories'] = Category.objects.filter(is_active=True, parent__isnull=True)
+        context['categories'] = Category.objects.filter(is_active=True)
         context['current_category'] = product.category.slug
         return context
 

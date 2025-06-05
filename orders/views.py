@@ -64,8 +64,10 @@ class OrderCreateView(LoginRequiredMixin, CreateView):
     form_class = OrderForm
     template_name = 'orders/order_create.html'
     success_url = reverse_lazy('order_list')
-
-    site_config_obj = SiteConfiguration.objects.first()
+    try:
+        site_config_obj = SiteConfiguration.objects.first()
+    except Exception as e:
+        site_config_obj = None
     shipping_cost = site_config_obj.shipping_cost if site_config_obj else 0.0
     tax_cost = site_config_obj.tax_percentage if site_config_obj else 0.0
 

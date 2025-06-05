@@ -11,7 +11,10 @@ from .forms import SiteConfigurationForm, BannerForm
 
 
 def home_page(request):
-    site_config = SiteConfiguration.objects.first()  # Assuming single config instance
+    try:
+        site_config = SiteConfiguration.objects.first()
+    except Exception as e:
+        site_config = None
     banners = Banner.objects.filter(is_active=True).order_by('-created_at')[:5]
     products = Product.objects.filter(is_active=True).order_by('-created_at')[:8]  # latest 8 products
     categories = Category.objects.filter(is_active=True)[:3]
@@ -107,7 +110,11 @@ def contact(request):
             return redirect('home')
     else:
         context = {}
-        site_config_obj = SiteConfiguration.objects.first()
+        try:
+            site_config_obj = SiteConfiguration.objects.first()
+        except Exception as e:
+            site_config_obj = None
+
         if site_config_obj:
             context['site_config'] = site_config_obj
         return render(request, 'website/contact.html', context)

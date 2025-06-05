@@ -4,6 +4,7 @@ from django.db import models
 class SiteConfiguration(models.Model):
     site_name = models.CharField(max_length=100, default='Sports Shop')
     site_logo = models.ImageField(upload_to='site/')
+    offer_message = models.CharField(max_length=300,  default='Welcome to SportsHub!', null=True, blank=True)
     contact_email = models.EmailField(default='contact@sportsshop.com')
     contact_phone = models.CharField(max_length=20)
     address = models.TextField()
