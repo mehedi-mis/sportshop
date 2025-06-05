@@ -83,9 +83,8 @@ class OrderCreateView(LoginRequiredMixin, CreateView):
         now = timezone.now()
         has_discount = UserDiscount.objects.filter(
             user=self.request.user,
-            expires_at__gte=now,
-            is_used=False
-        )
+            expires_at__gte=now
+        ).first()
 
         cart = SessionCart(self.request)
         if len(cart) == 0:
@@ -94,8 +93,18 @@ class OrderCreateView(LoginRequiredMixin, CreateView):
 
         order = form.save(commit=False)
         order.user = self.request.user
-        if has_discount.exists() and has_discount.first().discount_code == form.cleaned_data.get('coupon_code'):
-            order.order_total = cart.get_total_price() - has_discount.first().discount_percentage
+        if (
+                has_discount
+                and not has_discount.is_used
+                and has_discount.discount_code == form.cleaned_data.get('coupon_code')
+        ):
+            total_price = cart.get_total_price()
+            discount_percentage = Decimal(has_discount.discount_percentage)  # convert to Decimal
+            discount_amount = - - (total_price * discount_percentage / Decimal('100'))
+
+            order.order_total = max(discount_amount, Decimal('0.00'))  # ensures non-negative
+            has_discount.is_used=True
+            has_discount.save()
         else:
             order.order_total = cart.get_total_price()
         order.shipping_cost = self.shipping_cost

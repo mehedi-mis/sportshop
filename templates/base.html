@@ -50,6 +50,13 @@
 <!-- Footer -->
 {% include 'includes/footer.html' %}
 
+<!-- Back to chat button -->
+<a href="{% url 'chat_room_list' %}" class="btn btn-success btn-floating btn-lg rounded-circle shadow"
+   style="position: fixed; bottom: 40px; left: 40px; z-index: 1051;" id="chat-button">
+    <i class="fa-solid fa-comment"></i>
+</a>
+
+
 <!-- Back to Top Button -->
 <button type="button" class="btn btn-primary btn-floating btn-lg rounded-circle shadow"
         style="position: fixed; bottom: 40px; right: 40px; z-index: 1050; display: none;" id="back-to-top">
@@ -92,19 +99,19 @@
     checkNotifications();
     setInterval(checkNotifications, 20000);
 
-// Back to top button
-$(document).ready(function(){
-    $(window).scroll(function(){
-        if ($(this).scrollTop() > 100) {
-            $('#back-to-top').fadeIn();
-        } else {
-            $('#back-to-top').fadeOut();
-        }
-    });
+    // Back to top button
+    $(document).ready(function(){
+        $(window).scroll(function(){
+            if ($(this).scrollTop() > 100) {
+                $('#back-to-top').fadeIn();
+            } else {
+                $('#back-to-top').fadeOut();
+            }
+        });
 
-    $('#back-to-top').click(function(){
-        $('html, body').animate({scrollTop : 0}, 800);
-        return false;
+        $('#back-to-top').click(function(){
+            $('html, body').animate({scrollTop : 0}, 800);
+            return false;
     });
 
     // Update cart and wishlist counts from session storage

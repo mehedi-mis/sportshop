@@ -4,7 +4,7 @@
     <div class="container">
         <!-- Brand Logo -->
         <a class="navbar-brand" href="{% url 'home' %}">
-            <img src="{% static 'images/logo.png' %}" alt="SportsHub" height="40">
+            {% if site_config %} <img src="{{ site_config.site_logo.url }}" alt="{{ site_config.site_name }}" height="40">{% else %}<img src="{% static 'images/logo.png' %}" alt="SportsHub" height="40">{% endif %}
             {% if site_config %} {{ site_config.site_name }} {% else %}Demo Site{% endif %}
         </a>
 
@@ -44,11 +44,13 @@
                         <i class="fas fa-trophy"></i> Game Zone
                     </a>
                 </li>
+                {% if not user.is_staff %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'custom_jersey_create' 1 %}">
+                    <a class="nav-link" href="{% url 'custom_jersey_create' chat_room_id.pk %}">
                         <i class="fa-solid fa-shirt"></i> Custom Jersey Order
                     </a>
                 </li>
+                {% endif %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'contact' %}"><i class="fa-solid fa-address-book"></i> About Us</a>
                 </li>

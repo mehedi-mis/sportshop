@@ -95,6 +95,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 # custom context processors
+                'chat.context_processors.get_chat_room',
                 'website.context_processors.site_config',
                 'cart.context_processors.cart',
                 'notifications.context_processors.notifications',
