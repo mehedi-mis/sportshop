@@ -45,6 +45,12 @@
                 <p class="mb-2"><i class="fa fa-envelope text-primary mr-3"></i> {{ site_config.contact_email }}</p>
                 <p class="mb-2"><i class="fa fa-phone-alt text-primary mr-3"></i> {{ site_config.contact_phone }}</p>
             </div>
+            {% else %}
+            <div class="d-flex flex-column mb-3">
+                <p class="mb-2"><i class="fa fa-map-marker-alt text-primary mr-3"></i> Test address</p>
+                <p class="mb-2"><i class="fa fa-envelope text-primary mr-3"></i> testemail@email.com</p>
+                <p class="mb-2"><i class="fa fa-phone-alt text-primary mr-3"></i> +88045234240</p>
+            </div>
             {% endif %}
         </div>
     </div>
