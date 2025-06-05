@@ -26,7 +26,7 @@
                         <i class="fa-solid fa-bars-staggered"></i> Categories
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="categoriesDropdown">
-                        {% for category in categories %}
+                        {% for category in menu_categories %}
                         <li>
                             <a class="dropdown-item {% if current_category == category.slug %}active{% endif %}"
                                href="{% url 'product_list_by_category' category.slug %}">
@@ -44,7 +44,7 @@
                         <i class="fas fa-trophy"></i> Game Zone
                     </a>
                 </li>
-                {% if not user.is_staff %}
+                {% if not user.is_staff and user.is_authenticated %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'custom_jersey_create' chat_room_id.pk %}">
                         <i class="fa-solid fa-shirt"></i> Custom Jersey Order
