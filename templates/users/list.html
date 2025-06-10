@@ -49,11 +49,10 @@
                             <td>{{ user.email }}</td>
                             <td>{{ user.phone|default:"-" }}</td>
                             <td>
-                                <span class="badge badge-{% if user.is_active %}success{% else %}danger{% endif %}">
-                                    {% if user.is_active %}Active{% else %}Inactive{% endif %}
-                                </span>
-                                {% if user.is_staff %}
-                                <span class="badge badge-info ml-1">Staff</span>
+                                {% if user.is_active %}
+                                    <span class="badge bg-success">Active</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Inactive</span>
                                 {% endif %}
                             </td>
                             <td>

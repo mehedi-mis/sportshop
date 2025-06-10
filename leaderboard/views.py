@@ -1,9 +1,12 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils import timezone
 from django.http import JsonResponse
 from django.contrib import messages
 from django.db import transaction
+from django.urls import reverse_lazy
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from .models import TriviaQuestion, UserScore, LeaderboardPrize, UserDiscount
 from .forms import TriviaQuestionForm
 from products.models import Product
@@ -11,6 +14,37 @@ import random
 import uuid
 from datetime import timedelta
 
+
+class TriviaListView(ListView):
+    model = TriviaQuestion
+    template_name = 'game/trivia_list.html'
+    context_object_name = 'questions'
+
+class TriviaDetailView(DetailView):
+    model = TriviaQuestion
+    template_name = 'game/trivia_detail.html'
+
+# class TriviaCreateView(LoginRequiredMixin, CreateView):
+#     model = TriviaQuestion
+#     form_class = TriviaQuestionForm
+#     template_name = 'trivia/trivia_form.html'
+#     success_url = reverse_lazy('trivia_list')
+
+#     def form_valid(self, form):
+#         form.instance.created_by = self.request.user
+#         return super().form_valid(form)
+
+class TriviaUpdateView(LoginRequiredMixin, UpdateView):
+    model = TriviaQuestion
+    form_class = TriviaQuestionForm
+    template_name = 'game/trivia_form.html'
+    success_url = reverse_lazy('trivia_list')
+
+class TriviaDeleteView(LoginRequiredMixin, DeleteView):
+    model = TriviaQuestion
+    template_name = 'game/trivia_confirm_delete.html'
+    success_url = reverse_lazy('trivia_list')
+    
 
 @login_required
 def create_game_question(request):
@@ -66,7 +100,7 @@ def play_game(request):
         last_played__date=today
     ).count()
 
-    if questions_today >= 1:  # Limit to 1 questions per day
+    if questions_today >= 2:  # Limit to 1 questions per day
         messages.info(request, "You've reached your daily play limit. Come back tomorrow!")
         return redirect('game_home')
 

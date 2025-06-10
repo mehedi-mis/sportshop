@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}Trivia Questions{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between mb-3">
+        <h2>Trivia Questions</h2>
+        <a href="{% url 'create_game_question' %}" class="btn btn-primary">Add New</a>
+    </div>
+    <div class="list-group">
+        {% for question in questions %}
+        <a href="{% url 'trivia_detail' question.pk %}" class="list-group-item list-group-item-action">
+            {{ question.question|truncatewords:10 }}
+        </a>
+        {% empty %}
+        <p>No trivia questions found.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

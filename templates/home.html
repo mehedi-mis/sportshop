@@ -68,7 +68,7 @@
                     <p class="card-text">{{ product.short_description|default:"No description" }}</p>
                 </div>
                 <div class="card-footer">
-                    <strong>${{ product.price }}</strong>
+                    <strong>৳{{ product.price }}</strong>
                     <a href="{% url 'product_detail' product.slug %}" class="btn btn-primary btn-sm float-end">View</a>
                 </div>
             </div>

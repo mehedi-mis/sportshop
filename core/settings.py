@@ -1,5 +1,6 @@
 from pathlib import Path
 from decouple import config as getenv
+# from django.contrib.sites.models import Site
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -35,7 +36,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
 
     # custom app list below
-    'admin_dashboard',
+    'admin_dashboard.apps.AdminDashboardConfig',
     'cart',
     'chat',
     'custom_jerseys',
@@ -193,4 +194,14 @@ STRIPE_SECRET_KEY = getenv("STRIPE_SECRET_KEY")
 
 # Email (Development)
 DEFAULT_FROM_EMAIL = getenv('DEFAULT_FROM_EMAIL')
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = getenv('EMAIL_HOST_PASSWORD')
+# Force UTF-8 encoding
+DEFAULT_CHARSET = 'utf-8'

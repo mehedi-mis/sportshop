@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}Trivia Detail{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>{{ object.question }}</h2>
+    <p><strong>Sport:</strong> {{ object.get_sport_display }}</p>
+    <p><strong>Difficulty:</strong> {{ object.get_difficulty_display }}</p>
+    <p><strong>Options:</strong></p>
+    <ul>
+        <li>{{ object.option1 }}</li>
+        <li>{{ object.option2 }}</li>
+        <li>{{ object.option3 }}</li>
+        <li>{{ object.option4 }}</li>
+    </ul>
+    <p><strong>Correct Answer:</strong> Option {{ object.correct_answer }}</p>
+    <p><strong>Explanation:</strong> {{ object.explanation }}</p>
+    <div class="mt-3">
+        <a href="{% url 'trivia_edit' object.pk %}" class="btn btn-warning">Edit</a>
+        <a href="{% url 'trivia_delete' object.pk %}" class="btn btn-danger">Delete</a>
+        <a href="{% url 'trivia_list' %}" class="btn btn-secondary">Back</a>
+    </div>
+</div>
+{% endblock %}
