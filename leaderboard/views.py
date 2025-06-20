@@ -40,6 +40,7 @@ class TriviaUpdateView(LoginRequiredMixin, UpdateView):
     template_name = 'game/trivia_form.html'
     success_url = reverse_lazy('trivia_list')
 
+
 class TriviaDeleteView(LoginRequiredMixin, DeleteView):
     model = TriviaQuestion
     template_name = 'game/trivia_confirm_delete.html'
@@ -98,9 +99,9 @@ def play_game(request):
     today = timezone.now().date()
     questions_today = request.user.game_scores.filter(
         last_played__date=today
-    ).count()
+    ).exists()
 
-    if questions_today >= 1:  # Limit to 1 questions per day
+    if questions_today:  # Limit to 1 questions per day
         messages.info(request, "You've reached your daily play limit. Come back tomorrow!")
         return redirect('game_home')
 
