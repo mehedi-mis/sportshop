@@ -100,7 +100,7 @@ def play_game(request):
         last_played__date=today
     ).count()
 
-    if questions_today >= 2:  # Limit to 1 questions per day
+    if questions_today >= 1:  # Limit to 1 questions per day
         messages.info(request, "You've reached your daily play limit. Come back tomorrow!")
         return redirect('game_home')
 
@@ -208,6 +208,8 @@ def submit_answer(request):
 
 def award_discount_if_eligible(user):
     now = timezone.now()
+    first_day_of_month = now.replace(day=1)
+    last_day_of_month = (first_day_of_month + timedelta(days=32)).replace(day=1) - timedelta(days=1)
     user_score = UserScore.objects.filter(
         user=user,
         month=now.month,
@@ -227,10 +229,17 @@ def award_discount_if_eligible(user):
         return False
 
     # Check if user already has an unused discount
+    # existing_discount = UserDiscount.objects.filter(
+    #     user=user,
+    #     expires_at__gte=now,
+    #     is_used=False
+    # ).exists()
+    
+    # Check if user already has a discount in the current month
     existing_discount = UserDiscount.objects.filter(
         user=user,
-        expires_at__gte=now,
-        is_used=False
+        created_at__gte=first_day_of_month,
+        created_at__lte=last_day_of_month
     ).exists()
 
     if existing_discount:

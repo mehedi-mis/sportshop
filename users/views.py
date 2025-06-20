@@ -1,3 +1,4 @@
+from datetime import timedelta
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
@@ -178,11 +179,15 @@ def logout_view(request):
 def profile_view(request):
     """Profile View with update functionality"""
     now = timezone.now()
+    first_day_of_month = now.replace(day=1)
+    last_day_of_month = (first_day_of_month + timedelta(days=32)).replace(day=1) - timedelta(days=1)
+    
     user = request.user
     profile_updated = False
     user_discount = UserDiscount.objects.filter(
-        user=request.user,
-        expires_at__gte=now,
+        user=user,
+        created_at__gte=first_day_of_month,
+        created_at__lte=last_day_of_month,
         is_used=False
     )
 

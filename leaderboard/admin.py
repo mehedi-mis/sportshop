@@ -1,9 +1,11 @@
 # game/admin.py
+import csv
+import uuid
+from datetime import timedelta
 from django.contrib import admin
 from django.utils import timezone
 from django.db.models import Count, Sum
 from django.http import HttpResponse
-import csv
 from .models import TriviaQuestion, UserScore, LeaderboardPrize, UserDiscount
 
 
@@ -57,18 +59,30 @@ class UserScoreAdmin(admin.ModelAdmin):
     actions = ['award_discounts', 'export_scores']
 
     def award_discounts(self, request, queryset):
-        from datetime import timedelta
-        from django.utils import timezone
-        import uuid
+        # from datetime import timedelta
+        # from django.utils import timezone
+        # import uuid
 
         count = 0
         for score in queryset:
+            now = timezone.now()
+            first_day_of_month = now.replace(day=1)
+            last_day_of_month = (first_day_of_month + timedelta(days=32)).replace(day=1) - timedelta(days=1)
+            
             # Check if user already has an active discount
+            # existing = UserDiscount.objects.filter(
+            #     user=score.user,
+            #     expires_at__gte=timezone.now(),
+            #     is_used=False
+            # ).exists()
+            
+            # Check if user already has a discount in the current month
             existing = UserDiscount.objects.filter(
                 user=score.user,
-                expires_at__gte=timezone.now(),
-                is_used=False
+                created_at__gte=first_day_of_month,
+                created_at__lte=last_day_of_month
             ).exists()
+            
 
             if not existing:
                 discount_code = f"TRIVIA-{score.user.username[:3].upper()}-{uuid.uuid4().hex[:6].upper()}"
