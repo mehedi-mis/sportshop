@@ -1,0 +1,72 @@
+{% load static %}
+
+
+    <!-- Profile Card -->
+    <div class="card mb-4">
+        <div class="card-body text-center">
+            <div class="profile-picture-container mb-3">
+                {% if user.profile_picture %}
+                <img src="{{ user.profile_picture.url }}"
+                     class="rounded-circle img-fluid"
+                     alt="Profile Picture"
+                     style="width: 150px; height: 150px; object-fit: cover;">
+                {% else %}
+                <img src="{% static 'images/default_profile.png' %}"
+                     class="rounded-circle img-fluid"
+                     alt="Default Profile Picture"
+                     style="width: 150px; height: 150px; object-fit: cover;">
+                {% endif %}
+            </div>
+            <h5 class="card-title">{{ user.get_full_name|default:user.email }}</h5>
+            <p class="text-muted mb-1">{{ user.email }}</p>
+            <p class="text-muted">Member since {{ user.date_joined|date:"F Y" }}</p>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="card">
+        <div class="card-header">
+            <h5>Account Settings</h5>
+        </div>
+        <div class="list-group list-group-flush">
+            <a href="{% url 'update_profile' %}" class="list-group-item list-group-item-action {% if active_page == 'update_profile' %}active{% endif %}">
+                <i class="fas fa-user me-2"></i>Update Profile
+            </a>
+            <a href="{% url 'order_list' %}" class="list-group-item list-group-item-action {% if active_page == 'order_list' %}active{% endif %}">
+                <i class="fas fa-shopping-bag me-2"></i>Order History
+            </a>
+            <a href="{% url 'custom_jersey_list' %}" class="list-group-item list-group-item-action {% if active_page == 'custom_jersey_list' %}active{% endif %}">
+                <i class="fas fa-cart-flatbed me-2"></i>Custom Order History
+            </a>
+            {% if user.is_staff %}
+            <a href="{% url 'site_config_list' %}" class="list-group-item list-group-item-action {% if active_page == 'site_config_list' %}active{% endif %}">
+                <i class="fa-solid fa-screwdriver-wrench"></i> Site Config
+            </a>
+            <a href="{% url 'banner_list' %}" class="list-group-item list-group-item-action {% if active_page == 'banner_list' %}active{% endif %}">
+                <i class="fa-solid fa-images"></i> Banner List
+            </a>
+            <a href="{% url 'users_list' %}" class="list-group-item list-group-item-action {% if active_page == 'users_list' %}active{% endif %}">
+                <i class="fas fa-users me-2"></i>User List
+            </a>
+            <a href="{% url 'category_list' %}" class="list-group-item list-group-item-action {% if active_page == 'category_list' %}active{% endif %}">
+                <i class="fas fa-folder-plus me-2"></i>Categories
+            </a>
+            <a href="{% url 'product_list' %}" class="list-group-item list-group-item-action {% if active_page == 'product_list' %}active{% endif %}">
+                <i class="fas fa-file-circle-plus me-2"></i>Products
+            </a>
+            <a href="{% url 'trivia_list' %}" class="list-group-item list-group-item-action {% if active_page == 'trivia_list' %}active{% endif %}">
+                <i class="fa-solid fa-clipboard-question"></i> Game Questions
+            </a>
+            {% endif %}
+
+            <a href="{% url 'room_create' %}" class="list-group-item list-group-item-action {% if active_page == 'room_create' %}active{% endif %}">
+                <i class="fas fa-comment-medical me-2"></i>Create Chat
+            </a>
+            <a href="{% url 'password_change' %}" class="list-group-item list-group-item-action {% if active_page == 'password_change' %}active{% endif %}">
+                <i class="fas fa-key me-2"></i> Change Password
+            </a>
+            <a href="{% url 'logout' %}" class="list-group-item list-group-item-action {% if active_page == 'logout' %}active{% endif %}">
+                <i class="fas fa-sign-out me-2"></i>Logout
+            </a>
+        </div>
+    </div>

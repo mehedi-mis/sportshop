@@ -4,33 +4,34 @@
 <div class="container my-5">
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
-            <h3>
+            <h6>
                 {% if request.user.is_staff %}
                 Chat with {{ chat_room.user.get_full_name|default:chat_room.user.email }}
                 {% else %}
                 Chat with Admin
                 {% endif %}
-            </h3>
-            <span class="badge bg-{% if chat_room.is_active %}success{% else %}secondary{% endif %}">
-                {% if chat_room.is_active %}Active{% else %}Inactive{% endif %}
-            </span>
+                <span class="badge bg-{% if chat_room.is_active %}success{% else %}secondary{% endif %}">
+                    {% if chat_room.is_active %}Active{% else %}Inactive{% endif %}
+                </span>
+            </h6>
             <a href="{% url 'custom_jersey_create' chat_room.pk %}" class="btn btn-primary">
                 <i class="fas fa-plus me-2"></i>New Jersey Order
             </a>
         </div>
-        
+
         <div class="card-body chat-messages" style="height: 400px; overflow-y: auto;">
             {% for message in chat_messages %}
             <div class="mb-3 {% if message.sender == request.user %}text-end{% endif %}">
                 <div class="d-flex {% if message.sender == request.user %}justify-content-end{% endif %}">
-                    <div class="card {% if message.sender == request.user %}bg-primary text-white{% else %}bg-light{% endif %}" style="max-width: 70%;">
-                        <div class="card-body">
+                    <div class="card {% if message.sender == request.user %}bg-primary text-white{% else %}bg-light{% endif %}"
+                         style="max-width: 70%;">
+                        <div class="card-body p-1">
                             <p class="card-text">{{ message.content }}</p>
                             {% if message.image %}
-                            <img src="{{ message.image.url }}" class="img-fluid mt-2" style="max-height: 200px;">
+                            <img src="{{ message.image.url }}" class="img-fluid mt-2" style="max-height: 10px;">
                             {% endif %}
                         </div>
-                        <div class="card-footer {% if message.sender == request.user %}bg-primary{% else %}bg-light{% endif %} border-0 py-1">
+                        <div class="card-footer {% if message.sender == request.user %}bg-primary{% else %}bg-light{% endif %} border-0 py-0">
                             <small>{{ message.created_at|timesince }} ago</small>
                         </div>
                     </div>
@@ -40,13 +41,13 @@
             <p class="text-muted text-center mt-5">No messages yet. Start the conversation!</p>
             {% endfor %}
         </div>
-        
+
         <div class="card-footer">
             <form method="post" action="{% url 'message_create' chat_room.pk %}" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="input-group">
                     {{ form.content }}
-                    <input type="file" name="image" class="form-control" style="max-width: 150px;">
+                    <input type="file" name="image" class="form-control" style="max-width: 250px;">
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-paper-plane"></i>
                     </button>
@@ -57,8 +58,8 @@
 </div>
 
 <script>
-// Auto-scroll to bottom of chat
-const chatMessages = document.querySelector('.chat-messages');
-chatMessages.scrollTop = chatMessages.scrollHeight;
+    // Auto-scroll to bottom of chat
+    const chatMessages = document.querySelector('.chat-messages');
+    chatMessages.scrollTop = chatMessages.scrollHeight;
 </script>
 {% endblock %}

@@ -109,12 +109,13 @@ class OrderCreateView(LoginRequiredMixin, CreateView):
             has_discount.is_used = True
             has_discount.save()
         else:
+            order.discount_total = Decimal('0.00')
             order.order_total = cart.get_total_price()
         order.shipping_cost = self.shipping_cost
         order.tax = self.tax_cost
 
         if order.payment_method == 'STRIPE':
-            return self.stripe_checkout(cart, order, has_discount, discount_percentage)
+            return self.stripe_checkout(cart, order, has_discount, form.cleaned_data.get('coupon_code'), discount_percentage)
         else:
             self.create_order_items(order, cart)
             # create cart session
@@ -122,7 +123,7 @@ class OrderCreateView(LoginRequiredMixin, CreateView):
             messages.success(self.request, "Order created successfully")
             return redirect('order_detail', pk=order.pk)
 
-    def stripe_checkout(self, cart, order, discount_obj, discount_percentage):
+    def stripe_checkout(self, cart, order, discount_obj, coupon_code, discount_percentage):
         # Redirect to Stripe checkout session
         stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -154,17 +155,17 @@ class OrderCreateView(LoginRequiredMixin, CreateView):
             },
             'quantity': 1,
         })
-
-        line_items.append({
-            'price_data': {
-                'currency': 'BDT',
-                'product_data': {
-                    'name': f'🎁 ({discount_obj.discount_percentage})% Discount applied: {discount_obj.discount_code}',
+        if discount_percentage and coupon_code:
+            line_items.append({
+                'price_data': {
+                    'currency': 'BDT',
+                    'product_data': {
+                        'name': f'🎁 ({discount_obj.discount_percentage})% Discount applied: {discount_obj.discount_code}',
+                    },
+                    'unit_amount': 0,
                 },
-                'unit_amount': 0,
-            },
-            'quantity': 1,
-        })
+                'quantity': 1,
+            })
         self.create_order_items(order, cart)
         checkout_session = stripe.checkout.Session.create(
             payment_method_types=['card'],
@@ -227,3 +228,24 @@ class PaymentSuccessView(LoginRequiredMixin, TemplateView):
 
 class PaymentCancelledView(LoginRequiredMixin, TemplateView):
     template_name = 'orders/payment_cancelled.html'
+
+    def get(self, request, *args, **kwargs):
+        session_id = request.GET.get('session_id')
+        if session_id:
+            session = stripe.checkout.Session.retrieve(session_id)
+            try:
+                order = Order.objects.get(
+                    id=session.metadata.order_id,
+                    user=request.user
+                )
+                order.status = 'C'  # C for Cancelled
+                order.save()
+            except Order.DoesNotExist:
+                messages.warning(f"Cancelled payment, but order {session.metadata.order_id} not found.")
+
+        # Optionally show a message to the user
+        messages.warning(request, "Your payment was cancelled. No charges were made.")
+
+        # Optional: Clear session/cart or restore any pending discount or order status
+
+        return super().get(request, *args, **kwargs)

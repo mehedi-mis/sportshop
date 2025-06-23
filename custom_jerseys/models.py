@@ -26,6 +26,7 @@ class CustomJerseyOrder(models.Model):
     team_logo = models.ImageField(upload_to='custom_jerseys/logos/', blank=True)
     design_preferences = models.TextField(blank=True)
     reference_image = models.ImageField(upload_to='custom_jerseys/references/', blank=True)
+    reference_image_back = models.ImageField(upload_to='custom_jerseys/references/', blank=True)
     status = models.CharField(max_length=2, choices=STATUS_CHOICES, default='P')
     price = models.DecimalField(max_digits=10, decimal_places=2)
     is_paid = models.BooleanField(default=False)

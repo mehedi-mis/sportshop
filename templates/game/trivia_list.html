@@ -1,9 +1,17 @@
 {% extends 'base.html' %}
 
 {% block title %}Trivia Questions{% endblock %}
+{% load static %}
 
 {% block content %}
-<div class="container mt-4">
+<div class="container-fluid my-5">
+    <div class="row">
+        <div class="col-md-3">
+            <!-- Profile Card -->
+            <!-- Navigation -->
+            {% include 'includes/profile_side_nav.html' with active_page='trivia_list' %}
+        </div>
+        <div class="col-md-9">
     <div class="d-flex justify-content-between mb-3">
         <h2>Trivia Questions</h2>
         <a href="{% url 'create_game_question' %}" class="btn btn-primary">Add New</a>
@@ -18,4 +26,5 @@
         {% endfor %}
     </div>
 </div>
+    </div>
 {% endblock %}

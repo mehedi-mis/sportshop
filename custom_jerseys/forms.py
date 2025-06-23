@@ -9,7 +9,7 @@ class CustomJerseyOrderForm(forms.ModelForm):
         fields = [
             'name_on_jersey', 'jersey_number', 'size',
             'primary_color', 'secondary_color', 'team_logo',
-            'design_preferences', 'reference_image'
+            'design_preferences', 'reference_image', 'reference_image_back'
         ]
         widgets = {
             'design_preferences': forms.Textarea(attrs={'rows': 4}),

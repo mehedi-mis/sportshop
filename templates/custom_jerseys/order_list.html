@@ -1,53 +1,63 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
-<div class="container my-5">
-    <h1 class="mb-4">Custom Jersey Orders</h1>
-    
-    <div class="table-responsive">
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th>Order #</th>
-                    <th>Name</th>
-                    <th>Number</th>
-                    <th>Status</th>
-                    <th>Price</th>
-                    <th>Date</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for order in orders %}
-                <tr>
-                    <td>{{ order.order_number }}</td>
-                    <td>{{ order.name_on_jersey }}</td>
-                    <td>{{ order.jersey_number }}</td>
-                    <td>
+<div class="container-fluid my-5">
+    <div class="row">
+        <div class="col-md-3">
+            <!-- Profile Card -->
+            <!-- Navigation -->
+            {% include 'includes/profile_side_nav.html' with active_page='custom_jersey_list' %}
+        </div>
+        <div class="col-md-9">
+            <h1 class="mb-4">Custom Jersey Orders</h1>
+
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th>Order #</th>
+                        <th>Name</th>
+                        <th>Number</th>
+                        <th>Status</th>
+                        <th>Price</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for order in orders %}
+                    <tr>
+                        <td>{{ order.order_number }}</td>
+                        <td>{{ order.name_on_jersey }}</td>
+                        <td>{{ order.jersey_number }}</td>
+                        <td>
                         <span class="badge bg-{% if order.status == 'P' %}warning{% elif order.status == 'A' %}info{% elif order.status == 'D' %}primary{% elif order.status == 'PR' %}secondary{% elif order.status == 'S' %}success{% elif order.status == 'C' %}success{% else %}danger{% endif %}">
                             {{ order.get_status_display }}
                         </span>
-                    </td>
-                    <td>৳{{ order.price }}</td>
-                    <td>{{ order.created_at|date:"M d, Y" }}</td>
-                    <td>
-                        <a href="{% url 'custom_jersey_detail' order.pk %}" class="btn btn-sm btn-outline-primary">
-                            View
-                        </a>
-                        {% if user.is_staff %}
-                        <a href="{% url 'custom_jersey_status_update' order.pk %}" class="btn btn-sm btn-outline-secondary">
-                            Update
-                        </a>
-                        {% endif %}
-                    </td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="7" class="text-center">No custom jersey orders found</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                        </td>
+                        <td>৳{{ order.price }}</td>
+                        <td>{{ order.created_at|date:"M d, Y" }}</td>
+                        <td>
+                            <a href="{% url 'custom_jersey_detail' order.pk %}" class="btn btn-sm btn-outline-primary">
+                                View
+                            </a>
+                            {% if user.is_staff %}
+                            <a href="{% url 'custom_jersey_status_update' order.pk %}"
+                               class="btn btn-sm btn-outline-secondary">
+                                Update
+                            </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center">No custom jersey orders found</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
-</div>
-{% endblock %}
+    {% endblock %}

@@ -39,14 +39,20 @@
 
             {% if order.team_logo %}
             <div class="row mb-4">
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <h5>Team Logo</h5>
                     <img src="{{ order.team_logo.url }}" class="img-fluid" style="max-height: 200px;">
                 </div>
                 {% if order.reference_image %}
-                <div class="col-md-6">
-                    <h5>Reference Image</h5>
+                <div class="col-md-4">
+                    <h5>Reference Image (Front)</h5>
                     <img src="{{ order.reference_image.url }}" class="img-fluid" style="max-height: 200px;">
+                </div>
+                {% endif %}
+                {% if order.reference_image_back %}
+                <div class="col-md-4">
+                    <h5>Reference Image (Back)</h5>
+                    <img src="{{ order.reference_image_back.url }}" class="img-fluid" style="max-height: 200px;">
                 </div>
                 {% endif %}
             </div>

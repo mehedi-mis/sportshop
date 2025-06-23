@@ -5,30 +5,11 @@
 {% block content %}
 <div class="container-fluid my-5">
     <div class="row">
-        <!-- Profile Card -->
         <div class="col-md-3">
-            <div class="card mb-4">
-                <div class="card-body text-center">
-                    <div class="profile-picture-container mb-3">
-                        {% if user.profile_picture %}
-                        <img src="{{ user.profile_picture.url }}"
-                             class="rounded-circle img-fluid"
-                             alt="Profile Picture"
-                             style="width: 150px; height: 150px; object-fit: cover;">
-                        {% else %}
-                        <img src="{% static 'images/default_profile.png' %}"
-                             class="rounded-circle img-fluid"
-                             alt="Default Profile Picture"
-                             style="width: 150px; height: 150px; object-fit: cover;">
-                        {% endif %}
-                    </div>
-                    <h5 class="card-title">{{ user.get_full_name|default:user.email }}</h5>
-                    <p class="text-muted mb-1">{{ user.email }}</p>
-                    <p class="text-muted">Member since {{ user.date_joined|date:"F Y" }}</p>
-                </div>
-            </div>
+            <!-- Profile Card -->
+            <!-- Navigation -->
+            {% include 'includes/profile_side_nav.html' with active_page='update_profile' %}
         </div>
-
         <div class="col-md-9">
 
             <!-- Profile Update Form -->
