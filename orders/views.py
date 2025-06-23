@@ -87,6 +87,7 @@ class OrderCreateView(LoginRequiredMixin, CreateView):
             user=self.request.user,
             expires_at__gte=now
         ).first()
+        discount_percentage = Decimal(has_discount.discount_percentage)  # convert to Decimal
 
         cart = SessionCart(self.request)
         if len(cart) == 0:
@@ -101,52 +102,46 @@ class OrderCreateView(LoginRequiredMixin, CreateView):
                 and has_discount.discount_code == form.cleaned_data.get('coupon_code')
         ):
             total_price = cart.get_total_price()
-            discount_percentage = Decimal(has_discount.discount_percentage)  # convert to Decimal
-            discount_amount = - - (total_price * discount_percentage / Decimal('100'))
+            discount_amount = total_price - (total_price * discount_percentage / Decimal('100'))
 
+            order.discount_total = (total_price * discount_percentage / Decimal('100'))
             order.order_total = max(discount_amount, Decimal('0.00'))  # ensures non-negative
-            has_discount.is_used=True
+            has_discount.is_used = True
             has_discount.save()
         else:
             order.order_total = cart.get_total_price()
         order.shipping_cost = self.shipping_cost
         order.tax = self.tax_cost
-        order.save()
 
-        # Create order items
-        for item in cart:
-            OrderItem.objects.create(
-                order=order,
-                product=item['product'],
-                price=item['price'],
-                quantity=item['quantity']
-            )
         if order.payment_method == 'STRIPE':
-            return self.stripe_checkout(cart, order)
+            return self.stripe_checkout(cart, order, has_discount, discount_percentage)
         else:
-            order.status = 'P'
-            order.save()
+            self.create_order_items(order, cart)
             # create cart session
             cart.clear()
             messages.success(self.request, "Order created successfully")
             return redirect('order_detail', pk=order.pk)
 
-    def stripe_checkout(self, cart, order):
+    def stripe_checkout(self, cart, order, discount_obj, discount_percentage):
         # Redirect to Stripe checkout session
         stripe.api_key = settings.STRIPE_SECRET_KEY
 
-        line_items = [
-            {
+        line_items = []
+        for item in cart:
+            price = item['price']
+            if discount_percentage:
+                price = price - (price * discount_percentage / Decimal('100'))
+
+            line_items.append({
                 'price_data': {
                     'currency': 'BDT',
                     'product_data': {
                         'name': item['product'].name,
                     },
-                    'unit_amount': int(item['price'] * 100),  # Stripe uses cents
+                    'unit_amount': int(price * 100),  # Stripe uses cents
                 },
                 'quantity': item['quantity'],
-            } for item in cart
-        ]
+            })
 
         # Add shipping cost as a separate line item
         line_items.append({
@@ -160,6 +155,17 @@ class OrderCreateView(LoginRequiredMixin, CreateView):
             'quantity': 1,
         })
 
+        line_items.append({
+            'price_data': {
+                'currency': 'BDT',
+                'product_data': {
+                    'name': f'🎁 ({discount_obj.discount_percentage})% Discount applied: {discount_obj.discount_code}',
+                },
+                'unit_amount': 0,
+            },
+            'quantity': 1,
+        })
+        self.create_order_items(order, cart)
         checkout_session = stripe.checkout.Session.create(
             payment_method_types=['card'],
             line_items=line_items,
@@ -169,8 +175,19 @@ class OrderCreateView(LoginRequiredMixin, CreateView):
             cancel_url=self.request.build_absolute_uri(reverse_lazy('payment_cancelled')),
             metadata={'order_id': order.id}
         )
-
         return redirect(checkout_session.url)
+
+    def create_order_items(self, order, cart):
+        # Create order items
+        order.status = 'P'
+        order.save()
+        for item in cart:
+            OrderItem.objects.create(
+                order=order,
+                product=item['product'],
+                price=item['price'],
+                quantity=item['quantity']
+            )
 
 
 class PaymentSuccessView(LoginRequiredMixin, TemplateView):

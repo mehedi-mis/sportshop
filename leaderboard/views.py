@@ -99,9 +99,9 @@ def play_game(request):
     today = timezone.now().date()
     questions_today = request.user.game_scores.filter(
         last_played__date=today
-    ).exists()
+    ).count()
 
-    if questions_today:  # Limit to 1 questions per day
+    if questions_today>=2:  # Limit to 1 questions per day
         messages.info(request, "You've reached your daily play limit. Come back tomorrow!")
         return redirect('game_home')
 
@@ -253,7 +253,7 @@ def award_discount_if_eligible(user):
     UserDiscount.objects.create(
         user=user,
         discount_code=discount_code,
-        discount_percentage=50,
+        discount_percentage=25,
         expires_at=expires_at
     )
 

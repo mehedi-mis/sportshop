@@ -26,6 +26,7 @@ class Order(models.Model):
     shipping_address = models.TextField()
     billing_address = models.TextField(blank=True)
     order_total = models.DecimalField(max_digits=10, decimal_places=2)
+    discount_total = models.DecimalField(max_digits=10, decimal_places=2)
     tax = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     shipping_cost = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     is_paid = models.BooleanField(default=False)
