@@ -28,7 +28,7 @@
                         <div class="card-body p-1">
                             <p class="card-text">{{ message.content }}</p>
                             {% if message.image %}
-                            <img src="{{ message.image.url }}" class="img-fluid mt-2" style="max-height: 10px;">
+                            <img src="{{ message.image.url }}" class="img-fluid mt-2" style="max-height: 150px;">
                             {% endif %}
                         </div>
                         <div class="card-footer {% if message.sender == request.user %}bg-primary{% else %}bg-light{% endif %} border-0 py-0">

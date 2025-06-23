@@ -8,6 +8,7 @@ from products.models import Product, Category
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from .forms import SiteConfigurationForm, BannerForm
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 def home_page(request):
@@ -118,3 +119,11 @@ def contact(request):
         if site_config_obj:
             context['site_config'] = site_config_obj
         return render(request, 'website/contact.html', context)
+
+
+class ContactUsListView(LoginRequiredMixin, ListView):
+    model = ContactUs
+    template_name = 'contactus/contactus_list.html'  # customize as needed
+    context_object_name = 'contacts'
+    ordering = ['-id']  # newest first
+    paginate_by = 20  # optional: paginates results

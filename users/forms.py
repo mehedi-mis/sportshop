@@ -9,10 +9,13 @@ class CustomUserUpdateForm2(forms.ModelForm):
     class Meta:
         model = CustomUser
         fields = [
-            'first_name', 'last_name', 'email', 'phone',
+            'first_name', 'last_name', 'email', 'username', 'phone',
             'gender', 'date_of_birth', 'profile_picture',
             'address', 'city', 'state', 'zip_code', 'country'
         ]
+        widgets = {
+            'username': forms.EmailInput(attrs={'class': 'form-control', 'readonly': 'readonly'}),
+        }
 
 
 class CustomUserUpdateForm(UserChangeForm):
@@ -102,7 +105,7 @@ class UserProfileForm(forms.ModelForm):
     class Meta:
         model = CustomUser
         fields = [
-            'first_name', 'last_name', 'email', 'phone',
+            'first_name', 'last_name', 'email', 'username', 'phone',
             'gender', 'date_of_birth', 'profile_picture',
             'address', 'city', 'state', 'zip_code', 'country'
         ]
@@ -110,6 +113,7 @@ class UserProfileForm(forms.ModelForm):
             'first_name': forms.TextInput(attrs={'class': 'form-control'}),
             'last_name': forms.TextInput(attrs={'class': 'form-control'}),
             'email': forms.EmailInput(attrs={'class': 'form-control', 'readonly': 'readonly'}),
+            'username': forms.EmailInput(attrs={'class': 'form-control', 'readonly': 'readonly'}),
             'phone': forms.TextInput(attrs={'class': 'form-control'}),
             'gender': forms.Select(attrs={'class': 'form-select'}),
             'date_of_birth': forms.DateInput(
